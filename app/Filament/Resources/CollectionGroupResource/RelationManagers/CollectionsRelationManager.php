@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\CollectionGroupResource\RelationManagers;
 
+use Awcodes\Curator\Components\Forms\CuratorPicker;
+use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -30,7 +32,7 @@ class CollectionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('collection'),
+                CuratorColumn::make('featured_image_id')->size(80)->rounded(),
                 Tables\Columns\TextColumn::make('name'),
             ])
             ->filters([

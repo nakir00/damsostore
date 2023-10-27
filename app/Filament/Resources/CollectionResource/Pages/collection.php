@@ -12,13 +12,22 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use App\Filament\Resources\CollectionResource;
 use App\Models\Collection as ModelCollection;
+use Awcodes\Curator\Components\Forms\CuratorPicker;
+use Awcodes\Curator\Models\Media;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Tables\Actions\Action;
 use Filament\Actions\Action as HAction;
+use Filament\Infolists\Components\Actions\Action as IAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\Actions\Action as ActionsAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Support\Enums\FontWeight;
 
@@ -32,25 +41,9 @@ class collection extends Page implements HasForms, HasTable, HasInfolists
 
     public ModelCollection $record;
 
-    protected function getHeaderActions(): array
-{
-    return [
-        HAction::make('edit')
-            ->url(route('filament.admin.resources.collections.edit', $this->record)),
-    ];
-}
-
     public function infolist(Infolist $infolist): Infolist
     {
         $datas=$this->infoData();
-
-        $other=[
-            // ...
-            ImageEntry::make('media'),
-            TextEntry::make('record.name'),
-            TextEntry::make('record.group.name'),//group.name
-            TextEntry::make('record.created_at')->date(),
-        ];
         $parent=[];
         if($datas['parents']==[]){
             $parent[]=TextEntry::make('Aucun parent pour cette collection');
@@ -58,13 +51,10 @@ class collection extends Page implements HasForms, HasTable, HasInfolists
         else
         {
             foreach($datas['parents'] as $id=>$data){
-                $parent[]=TextEntry::make('parents.'.$id.'.name') ->url(fn (): string => route('filament.admin.resources.collections.view', $data));
-               //dd($data,$id);
+                $parent[]=TextEntry::make('parents.'.$id.'.name') ->url(fn (): string => route('filament.admin.resources.collections.view', $data))->label('');
            }
+           $parent=array_reverse($parent);
         }
-
-        //dd($parent);
-        //$datas[]=$parent;
         $infolist
             ->state($datas)
             ->schema([
@@ -78,17 +68,40 @@ class collection extends Page implements HasForms, HasTable, HasInfolists
                                 '2xl' => 2,
                         ])
                     ->schema([
-                            ImageEntry::make('media'),
+                            $datas['media']==null?
+                            TextEntry::make('')
+                                ->weight(FontWeight::Bold)->label('aucun media'):
+                                ImageEntry::make('media'),
                             TextEntry::make('record.name')
                                 ->weight(FontWeight::Bold)->label('nom'),
                             TextEntry::make('record.group.name')
                                 ->label('Groupe'),
-                    ])->grow(),
-                    Section::make('Parents')->schema(/* [
-                        TextEntry::make('parents.0.name')
-                        ->listWithLineBreaks()
+                            Actions::make([
+                                IAction::make('edit')
+                                ->url(route('filament.admin.resources.collections.edit', ['record' => $this->record])),
+                                IAction::make('supprimer')
+                                    ->requiresConfirmation()
+                                    ->before(function () {
+                                        $fils=ModelCollection::where('parent_id',$this->record->id)->get();
+                                        if($this->record->parent_id==null)
+                                        {
+                                            foreach($fils as $enfant){
+                                                $enfant->parent_id=null;
+                                                $enfant->save();
+                                            }
+                                        }else{
+                                            foreach($fils as $enfant){
+                                                $enfant->parent_id=$this->record->parent_id;
+                                                $enfant->save();
+                                            }
+                                        }
+                                        $this->record->delete();
+                                        redirect(route('filament.admin.resources.collections.index'));
 
-                    ] */$parent)
+                                    })
+                                ]),
+                    ])->grow(),
+                    Section::make('Parents')->schema($parent)
                 ])->from('md')
             ]);
         return $infolist;
@@ -108,28 +121,65 @@ class collection extends Page implements HasForms, HasTable, HasInfolists
                 // ...
                 Action::make('voir')
                 ->url(fn (ModelCollection $record): string => route('filament.admin.resources.collections.view', ['record'=>$record])),
+                Action::make('edit')
+                ->fillForm(fn (ModelCollection $record): array => [
+                    'image' => $record->getMedia('collection'),
+                    'name'=> $record->name,
+                    /* 'collection_group_id' => $record->group(),
+                    'parent' */
+                ])
+                ->form([
+                    CuratorPicker::make('featured_image_id')
+                    ->relationship('featuredImage', 'id'),
+                        TextInput::make('name')->required()->maxLength(50),
+
+                        Select::make('collection_group_id')
+                            ->relationship(name: 'group', titleAttribute: 'name')
+                            ->label('group'),
+                        Select::make('parent_id')
+                            ->relationship(name: 'parent', titleAttribute: 'name')
+                            ->label('collection parent'),
+
+                ])
+                ->action(function (array $data, ModelCollection $record): void {
+                    $record->save([$data]);
+                })
             ])
             ->bulkActions([
                 // ...
             ])
             ->emptyStateActions([
                 Action::make('create')
-                    ->label('ajouter une collection enfant')
-                    ->url(route('filament.admin.resources.collections.create'))
-                    ->icon('heroicon-m-plus')
-                    ->button(),
+                ->form([
+                        CuratorPicker::make('featured_image_id')
+                        ->relationship('featuredImage', 'id'),
+                        TextInput::make('name')->required()->maxLength(50),
+
+                ])
+                ->action(function (array $data, ModelCollection $record=null): void {
+                    $record=new ModelCollection(['name'=>$data['name'],'featured_image_id'=>$data['featured_image_id'],'collection_group_id'=>$this->record->collection_group_id,'parent_id'=>$this->record->id]);
+                    $record->save();
+                })
             ]);
     }
 
-    public function tableData()
-    {
-
-    }
 
     public function infoData()
     {
+        // =null;
+        $media=Media::query()->where('id',$this->record->featured_image_id)->get(); //;
+        if($media!==null)
+        {
+            $media = $media->first()->getSignedUrl();
+            if (strpos($media, "/curator/") === 0) {
+                $media=config('app.url').$media;
+            }
+        }
+        else
+        {
+            $media=null;
+        }
 
-        $media = $this->record->getMedia("collection")[0]->getUrl();
         $parents=$this->getAllParents($this->record);
         $datas=['parents'=>$parents,'media'=>$media,'record'=>$this->record];
         return $datas;
@@ -137,17 +187,11 @@ class collection extends Page implements HasForms, HasTable, HasInfolists
 
     public function getAllParents($object, $allParents = [])
     {
-       // $allParents[] = $object;
-        // Vérifiez si l'objet a un parent.
-
         if ($object->parent_id!=null) {
             $parent=$object->parent()->get()->first();
-            // Récursivement, appelez la fonction pour le parent.
             $allParents[] = $parent;
-            //$allParents[]=$this->record->parent;
             return $this->getAllParents($parent, $allParents);
         }
-
         return $allParents;
     }
 }

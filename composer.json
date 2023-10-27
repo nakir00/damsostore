@@ -9,10 +9,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "awcodes/filament-curator": "^3.1",
         "filament/filament": "3.0-stable",
         "filament/forms": "3.0-stable",
         "filament/notifications": "3.0-stable",
-        "filament/spatie-laravel-media-library-plugin": "3.0-stable",
         "filament/tables": "3.0-stable",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/breeze": "^1.24",
@@ -22,7 +22,6 @@
         "livewire/livewire": "^3.0",
         "livewire/volt": "^1.0",
         "mckenziearts/laravel-notify": "^2.4",
-        "spatie/laravel-medialibrary": "^10.13",
         "spatie/laravel-permission": "^5.11"
     },
     "require-dev": {

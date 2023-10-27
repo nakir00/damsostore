@@ -16,8 +16,6 @@ use Lunar\Base\Traits\HasUrls;
 use Lunar\Base\Traits\LogsActivity;
 use Lunar\Base\Traits\Searchable;
 use Lunar\Database\Factories\BrandFactory; */
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $id
@@ -26,11 +24,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  */
-class Brand extends Model implements HasMedia
+class Brand extends Model
 {
     use //HasAttributes,
-        HasFactory,
-        InteractsWithMedia;
+        HasFactory;
 
         /* HasMacros,
         HasMedia,

@@ -12,7 +12,7 @@ class CreateProductOptionValuesTable extends Migration
             $table->bigIncrements('id');
             $table->foreignId('product_option_id')->constrained('product_options');
             $table->string('name');
-            $table->integer('position')->default(0)->index();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

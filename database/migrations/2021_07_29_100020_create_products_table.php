@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Collection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
@@ -16,11 +17,12 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_type_id')->constrained('product_types');
+            $table->foreignIdFor(Collection::class)->default(null)->nullable();
             $table->string('name')->index();
-            $table->string('description')->index();
-            $table->string('status')->index();
- /*         $table->json('attribute_data');
-            $table->string('brand')->nullable()->index(); */
+            $table->json('description')->nullable();
+            $table->json('attribute_data')->nullable();
+            $table->integer('old_price')->nullable()->default(0);
+            $table->string('status')->default('enPreparation');
             $table->timestamps();
             $table->softDeletes();
         });

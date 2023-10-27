@@ -7,6 +7,7 @@ use App\Filament\Resources\ProductOptionResource\RelationManagers;
 use App\Models\ProductOption;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -27,7 +28,6 @@ class ProductOptionResource extends Resource
             ->schema([
                 //
                 TextInput::make('name')->required()->maxLength(50),
-                //TextInput::make('position')->integer()->required(),
             ]);
     }
 

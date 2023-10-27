@@ -5,6 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CollectionResource\Pages;
 use App\Filament\Resources\CollectionResource\RelationManagers;
 use App\Models\Collection;
+use Awcodes\Curator\Components\Forms\CuratorPicker;
+use Awcodes\Curator\Components\Tables\CuratorColumn;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -26,42 +29,41 @@ class CollectionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+
     public static function form(Form $form): Form
     {
-        return $form
+
+         $form
             ->schema([
                 //
-                SpatieMediaLibraryFileUpload::make('image')->collection('collection')
-                    ->image()
-                    ->imageEditor()
-                    ->imageEditorMode(2),
-                TextInput::make('name')->required()->maxLength(50),
-
+                CuratorPicker::make('featured_image_id')
+                    ->relationship('featuredImage', 'id'),
+                TextInput::make('name')->required()->maxLength(50)
+               /*  ->live()
+                ->afterStateUpdated(fn ($component) => $form->schema([])), */,
                 Select::make('collection_group_id')
                     ->relationship(name: 'group', titleAttribute: 'name')
                     ->label('group'),
                 Select::make('parent_id')
                     ->relationship(name: 'parent', titleAttribute: 'name')
                     ->label('collection parent'),
+                /* Repeater::make('members')
+                    ->schema([
+                        Select::make('parent_id')
+                    ->relationship(name: 'parent', titleAttribute: 'name')
+                    ->label('collection parent'),
+                    ]) ->reorderable(false) ->deletable(false)
+ */
 
             ]);
-    }
-
-    public static function infolist(Infolist $info): Infolist
-    {
-        return $info
-            ->schema([
-                // ...
-                TextEntry::make('name')
-            ]);
+            return $form;
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
-                SpatieMediaLibraryImageColumn::make('image')->collection('collection'),
+                CuratorColumn::make('featured_image_id')->size(50)->rounded(),
                 TextColumn::make('name')->label("nom"),
                 TextColumn::make('group.name')->label('groupe'),
             ])

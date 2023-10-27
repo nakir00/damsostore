@@ -2,38 +2,28 @@
 
 namespace App\Models;
 
+use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
-/*use Lunar\Base\Casts\AsAttributeData;
- use Lunar\Base\Traits\HasChannels;
-use Lunar\Base\Traits\HasCustomerGroups;
-use Lunar\Base\Traits\HasMacros;
-use Lunar\Base\Traits\HasMedia;
-use Lunar\Base\Traits\HasTags;
-use Lunar\Base\Traits\HasTranslations;
-use Lunar\Base\Traits\HasUrls;
-use Lunar\Base\Traits\LogsActivity;
-use Lunar\Base\Traits\Searchable;
-use Lunar\Database\Factories\ProductFactory;
-use Lunar\Jobs\Products\Associations\Associate;
-use Lunar\Jobs\Products\Associations\Dissociate;*/
-use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
 
 /**
  * @property int $id
- * @property ?int $brand_id
  * @property int $product_type_id
- * @property string $status
+ * @property ?int $collection_id
+ * @property string $name
+ * @property int $old_price
+ * @property string status
+ * @property array description
  * @property array $attribute_data
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  * @property ?\Illuminate\Support\Carbon $deleted_at
  */
-class Product extends Model// implements SpatieHasMedia
+class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -52,20 +42,22 @@ class Product extends Model// implements SpatieHasMedia
      *
      * @var array
      */
-    protected $fillable = [
-       /*  'attribute_data', */
+    /*  protected $fillable = [
+       'attribute_data',
         'product_type_id',
         'status',
         'brand_id',
-    ];
+    ]; */
+
+    protected $guarded=[];
 
     /**
      * Define which attributes should be cast.
      *
      * @var array
      */
-    protected $casts = [
-        'attribute_data' => AsAttributeData::class,
+     protected $casts = [
+        'description' => 'array',
     ];
 
     /**
@@ -73,10 +65,10 @@ class Product extends Model// implements SpatieHasMedia
      *
      * @return array
      */
-    public function mappedAttributes()
+   /*  public function mappedAttributes()
     {
         return $this->productType->mappedAttributes;
-    }
+    } */
 
     /**
      * Return the product type relation.
@@ -93,10 +85,10 @@ class Product extends Model// implements SpatieHasMedia
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function images()
+ /*    public function images()
     {
         return $this->media()->where('collection_name', 'images');
-    }
+    } */
 
     /**
      * Return the product variants relation.
@@ -121,6 +113,12 @@ class Product extends Model// implements SpatieHasMedia
         )->withPivot(['position'])->withTimestamps();
     }
 
+
+    public function collection()
+    {
+        return $this->belongsTo(Collection::class);
+    }
+
     /**
      * Return the associations relationship.
      *
@@ -128,7 +126,7 @@ class Product extends Model// implements SpatieHasMedia
      */
     public function associations()
     {
-        return $this->hasMany(ProductAssociation::class, 'product_parent_id');
+        return $this->hasMany(Product::class, 'product_parent_id');
     }
 
     /**
@@ -138,7 +136,15 @@ class Product extends Model// implements SpatieHasMedia
      */
     public function inverseAssociations()
     {
-        return $this->hasMany(ProductAssociation::class, 'product_target_id');
+        return $this->hasMany(Product::class, 'product_target_id');
+    }
+
+    public function productPictures(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(Media::class, 'media_product', 'product_id', 'media_id')
+            ->withPivot('order')
+            ->orderBy('order');
     }
 
     /**
@@ -189,10 +195,10 @@ class Product extends Model// implements SpatieHasMedia
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function brand()
+/*     public function brand()
     {
         return $this->belongsTo(Brand::class);
-    }
+    } */
 
     /**
      * Apply the status scope.
@@ -219,4 +225,7 @@ class Product extends Model// implements SpatieHasMedia
             'priceable_id'
         )->wherePriceableType(ProductVariant::class);
     } */
+
+
+
 }

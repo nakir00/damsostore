@@ -1,5 +1,6 @@
 <?php
 
+use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;

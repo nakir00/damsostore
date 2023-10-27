@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductTypeResource\Pages;
 use App\Filament\Resources\ProductTypeResource\RelationManagers;
 use App\Models\ProductType;
+use Awcodes\Curator\Components\Forms\CuratorPicker;
+use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -29,10 +31,6 @@ class ProductTypeResource extends Resource
         return $form
             ->schema([
                 //
-                SpatieMediaLibraryFileUpload::make('image')->collection('product_type')
-                ->image()
-                ->imageEditor()
-                ->imageEditorMode(2),
                 TextInput::make('name')->required()->maxLength(50),
             ]);
     }
@@ -42,8 +40,7 @@ class ProductTypeResource extends Resource
         return $table
             ->columns([
                 //
-                SpatieMediaLibraryImageColumn::make('image')->collection('product_type'),
-                TextColumn::make('name')->label("nom"),
+                TextColumn::make('name')->label("nom")->searchable(),
             ])
             ->filters([
                 //

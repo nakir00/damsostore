@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-class AddBrandIdToProductsTable extends Migration
+class AddBrandIdToProductsTable //extends Migration
 {
     public function up()
     {
@@ -15,7 +15,7 @@ class AddBrandIdToProductsTable extends Migration
                 ->constrained('brands');
         });
 
-        
+
     }
 
     public function down()

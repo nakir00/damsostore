@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Spatie\MediaLibrary\HasMedia as SpatieHasMedia;
+
 
 /**
  * @property int $id
  * @property int $product_option_id
  * @property string $name
- * @property int $position
+ * @property bool active
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  */
@@ -30,15 +30,8 @@ class ProductOptionValue extends Model// implements SpatieHasMedia
      */
     protected $casts = [
        // 'name' => AsCollection::class,
+       'active'=>'bool',
     ];
-
-    /**
-     * Return a new factory instance for the model.
-     */
-   /*  protected static function newFactory(): ProductOptionValueFactory
-    {
-        return ProductOptionValueFactory::new();
-    } */
 
     /**
      * Define which attributes should be
@@ -51,12 +44,7 @@ class ProductOptionValue extends Model// implements SpatieHasMedia
     /* protected function setNameAttribute($value)
     {
         $this->attributes['name'] = json_encode($value);
-    }
-
-    public function getNameAttribute($value)
-    {
-        return json_decode($value);
-    } */
+    }*/
 
     public function option()
     {

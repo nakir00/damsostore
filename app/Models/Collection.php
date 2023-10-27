@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
+use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,22 +14,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $id
  * @property int $collection_group_id
- * @property-read  int $_lft
- * @property-read  int $_rgt
  * @property ?int $parent_id
  * @property string $type
+ * @property array description
  * @property ?array $attribute_data
  * @property string $sort
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  * @property ?\Illuminate\Support\Carbon $deleted_at
  */
-class Collection extends Model implements HasMedia
+class Collection extends Model
 {
     use
-        HasFactory,
-        //NodeTrait;
-        InteractsWithMedia;
+        HasFactory;
     /**
      * Define which attributes should be cast.
      *
@@ -60,21 +56,46 @@ class Collection extends Model implements HasMedia
         return $this->belongsTo(CollectionGroup::class, 'collection_group_id');
     }
 
+    /**
+     * Return the parent collection relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function parent():BelongsTo{
         return $this->belongsTo(Collection::class);
     }
 
+    /**
+     * Return the child collection relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function enfants():HasMany
     {
         return $this->hasMany(Collection::class);
     }
 
+    /**
+     * checks if the collection has a parent collection
+     *
+     * @return bool
+     */
     public function hasParent():bool
     {
         return $this->parent_id?true:false;
     }
 
-    
+    /**
+     * Return the featured image relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function featuredImage(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'featured_image_id', 'id');
+    }
+
+
 
 /*     public function scopeInGroup(Builder $builder, $id)
     {

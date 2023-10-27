@@ -76,6 +76,6 @@ class ProductOption extends Model //implements SpatieHasMedia
      */
     public function values()
     {
-        return $this->hasMany(ProductOptionValue::class)->orderBy('position');
+        return $this->hasMany(ProductOptionValue::class);
     }
 }

@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CollectionGroupResource\Pages;
 use App\Filament\Resources\CollectionGroupResource\RelationManagers;
 use App\Models\CollectionGroup;
+use Awcodes\Curator\Components\Forms\CuratorPicker;
+use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -19,6 +21,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+use function Laravel\Prompts\text;
+
 class CollectionGroupResource extends Resource
 {
     protected static ?string $model = CollectionGroup::class;
@@ -29,11 +33,12 @@ class CollectionGroupResource extends Resource
     {
         return $form
             ->schema([
-                SpatieMediaLibraryFileUpload::make('image')->collection('collection_group')
-                ->image()
-                ->imageEditor()
-                ->imageEditorMode(2),
+                CuratorPicker::make('featured_image_id')
+                    ->relationship('featuredImage', 'id'),
                 TextInput::make('name')->required()->maxLength(50),
+                Select::make('product_option_id')
+                    ->relationship(name: 'productOption',titleAttribute:'name')
+                    ->label('options de produit'),
             ]);
     }
 
@@ -42,10 +47,9 @@ class CollectionGroupResource extends Resource
         return $table
             ->columns([
                 //
-
-                SpatieMediaLibraryImageColumn::make('image')->collection('collection_group'),
+                CuratorColumn::make('featured_image_id')->size(80)->rounded(),
                 TextColumn::make('name')->label("nom"),
-                ToggleColumn::make('active')->label("actif")
+                TextColumn::make('product_option')->label('option de produit'),
             ])
             ->filters([
                 //

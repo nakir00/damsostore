@@ -10,6 +10,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,12 +28,10 @@ class ValuesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                $this->getOwnerRecord()->getAttribute("name")=='couleur'?
-                ColorPicker::make('name'):
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
-
+                    ->unique()
+                    ->maxLength(30),
             ]);
     }
 
@@ -41,9 +40,8 @@ class ValuesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                $this->getOwnerRecord()->getAttribute("name")=='couleur'?
-                ColorColumn::make('name'):
                 TextColumn::make('name'),
+                ToggleColumn::make('active')
             ])
             ->filters([
                 //
@@ -53,7 +51,6 @@ class ValuesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                /*  Tables\Actions\BulkActionGroup::make([

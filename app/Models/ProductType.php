@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 /* use Lunar\Base\Traits\HasAttributes;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\ProductTypeFactory; */
@@ -16,10 +17,10 @@ use Lunar\Database\Factories\ProductTypeFactory; */
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  */
-class ProductType extends Model implements HasMedia
+class ProductType extends Model
 {
     // use HasAttributes;
-    use HasFactory,InteractsWithMedia;
+    use HasFactory;
     // use HasMacros;
 
     /**
@@ -57,20 +58,20 @@ class ProductType extends Model implements HasMedia
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function productAttributes()
+    /* public function productAttributes()
     {
         return $this->mappedAttributes()->whereAttributeType(Product::class);
-    }
+    } */
 
     /**
      * Return the variant attributes relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function variantAttributes()
+    /* public function variantAttributes()
     {
         return $this->mappedAttributes()->whereAttributeType(ProductVariant::class);
-    }
+    } */
 
     /**
      * Get the products relation.
