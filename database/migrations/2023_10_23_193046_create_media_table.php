@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Product;
-use App\Models\ProductVariant;
 use Awcodes\Curator\Facades\Curator;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Migrations\Migration;
@@ -33,9 +32,9 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('media_product_variant',function (Blueprint $table){
+        Schema::create('media_product',function (Blueprint $table){
             $table->id();
-            $table->foreignIdFor(ProductVariant::class);
+            $table->foreignIdFor(Product::class);
             $table->foreignIdFor(Media::class);
             $table->integer('order')->nullable();
             $table->timestamps();
@@ -44,7 +43,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('media_product_variant');
+        Schema::dropIfExists('media_product');
         Schema::dropIfExists(app(config('curator.model'))->getTable());
 
     }

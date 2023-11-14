@@ -22,12 +22,6 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
-            colors: {
-                danger: colors.red,
-                primary: colors.black,
-                success: colors.emerald,
-                warning: colors.amber,
-            },
         },
     },
     corePlugins: {

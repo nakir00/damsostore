@@ -6,7 +6,7 @@ return [
         'image/png',
         'image/webp',
         'image/svg+xml',
-        'application/pdf',
+   //     'application/pdf',
     ],
     'cloud_disks' => [
         's3',

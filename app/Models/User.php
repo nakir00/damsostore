@@ -46,11 +46,5 @@ class User extends Authenticatable// implements HasMedia
         'password' => 'hashed',
     ];
 
-    public function registerMediaConversions(Media $media = null): void
-        {
-            $this
-                ->addMediaConversion('preview')
-                ->fit(Manipulations::FIT_CROP, 300, 300)
-                ->nonQueued();
-        }
+    
 }

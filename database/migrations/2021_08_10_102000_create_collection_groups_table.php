@@ -14,8 +14,10 @@ class CreateCollectionGroupsTable extends Migration
         Schema::create('collection_groups', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignIdFor(Media::class,'featured_image_id');
-            $table->json('attribute_data')->nullable();
             $table->string('name');
+            $table->string('slug');
+            $table->json('attribute_data')->nullable();
+            $table->boolean('onNavBar')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

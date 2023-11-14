@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Awcodes\Curator\Models\Media;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Spatie\Tags\HasTags;
 
 /* use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\CollectionGroupFactory */;
@@ -24,6 +26,7 @@ use Lunar\Database\Factories\CollectionGroupFactory */;
 class CollectionGroup extends Model
 {
     use HasFactory;
+    use HasTags;
 
 
     protected $guarded = [];
@@ -57,11 +60,21 @@ class CollectionGroup extends Model
 
     }
 
-    /**
-     * Return the featured image relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    public function kits()
+    {
+        return $this->hasMany(kit::class);
+    }
+
+    /* public function productSlider(): MorphOne
+    {
+        return $this->morphOne(ProductSlider::class, 'collectionable');
+    } */
+
+   /*  public function collectionSlider(): MorphOne
+    {
+        return $this->morphOne(collectionsSlider::class, 'collectionable');
+    } */
+
     public function featuredImage(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'featured_image_id', 'id');

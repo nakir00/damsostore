@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Spatie\Tags\HasTags;
 
 /* use Kalnoy\Nestedset\NodeTrait; */
 
 /**
  * @property int $id
+ * @property int $featured_image_id
  * @property int $collection_group_id
+ * @property string $name
  * @property ?int $parent_id
  * @property string $type
  * @property array description
@@ -25,8 +29,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Collection extends Model
 {
-    use
-        HasFactory;
+    use HasFactory;
+    use HasTags;
     /**
      * Define which attributes should be cast.
      *
@@ -85,15 +89,21 @@ class Collection extends Model
         return $this->parent_id?true:false;
     }
 
+    public function productSlider(): MorphOne
+    {
+        return $this->morphOne(ProductSlider::class, 'collectionable');
+    }
+
+    public function collectionSlider(): MorphOne
+    {
+        return $this->morphOne(collectionsSlider::class, 'collectionable');
+    }
+
     /**
      * Return the featured image relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function featuredImage(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'featured_image_id', 'id');
-    }
 
 
 
@@ -115,6 +125,12 @@ class Collection extends Model
         )->withPivot([
             'position',
         ])->withTimestamps()->orderByPivot('position');
+    }
+
+
+    public function featuredImage(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'featured_image_id', 'id');
     }
 
     /**

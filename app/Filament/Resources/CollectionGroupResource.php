@@ -7,19 +7,18 @@ use App\Filament\Resources\CollectionGroupResource\RelationManagers;
 use App\Models\CollectionGroup;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieTagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 use function Laravel\Prompts\text;
 
@@ -34,11 +33,15 @@ class CollectionGroupResource extends Resource
         return $form
             ->schema([
                 CuratorPicker::make('featured_image_id')
-                    ->relationship('featuredImage', 'id'),
-                TextInput::make('name')->required()->maxLength(50),
+                    ->relationship('featuredImage', 'id')->required(),
+                    TextInput::make('name')->required()->live(debounce: 1000)
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                    TextInput::make('slug')->prefix('collection/'),
+                SpatieTagsInput::make('tags'),
                 Select::make('product_option_id')
                     ->relationship(name: 'productOption',titleAttribute:'name')
                     ->label('options de produit'),
+
             ]);
     }
 
@@ -48,8 +51,11 @@ class CollectionGroupResource extends Resource
             ->columns([
                 //
                 CuratorColumn::make('featured_image_id')->size(80)->rounded(),
-                TextColumn::make('name')->label("nom"),
-                TextColumn::make('product_option')->label('option de produit'),
+                TextColumn::make('name')->label("nom")->searchable(),
+                TextColumn::make('slug')->label("slug")->searchable(),
+                SpatieTagsColumn::make('tags')->searchable(),
+                TextColumn::make('productOption.name')->label('option de produit'),
+                ToggleColumn::make('onNavBar')
             ])
             ->filters([
                 //

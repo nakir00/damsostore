@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -58,6 +59,7 @@ class ProductOptionResource extends Resource
     {
         return [
             //
+        
             RelationManagers\ValuesRelationManager::class
         ];
     }

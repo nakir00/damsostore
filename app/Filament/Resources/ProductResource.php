@@ -7,23 +7,26 @@ use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
+use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Resources\Components\Tab;
+use Filament\Forms\Set;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieTagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
+
 
 class ProductResource extends Resource
 {
@@ -33,50 +36,48 @@ class ProductResource extends Resource
 
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
-              /*   CuratorPicker::make('product_picture_ids')
+                CuratorPicker::make('images')
                     ->multiple()
-                    ->relationship('productPictures', 'id')
-                    ->orderColumn('order')
-                    ->label('images')
-                    ->buttonLabel('ajouter des images')
-                    ->color('primary') // defaults to primary
-                    ->size('md') // defaults to md
-                    ->constrained(true)
-
-                    ->lazyLoad(true)
-                    ->preserveFilenames(), */
-                TextInput::make('name')->required(),
+                    ->relationship('images', 'id')
+                    ->orderColumn('order'),
+                TextInput::make('name')->required()->live(debounce: 1000)
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                TextInput::make('slug')->prefix('product/'),
                 TextInput::make('old_price')->numeric()->placeholder("25.000")->required(),
+                Repeater::make('attribute_data')->label('arbre des colections')
+                    ->schema([
+                        TextInput::make('collection_name')->label('nom')->disabled(),
+                    ])
+                    ->addable(false)
+                    ->reorderable(false)
+                    ->deletable(false),
                 Repeater::make('description')
                     ->schema([
-                        TextInput::make('name')->required(),
-                        Select::make('role')
-                            ->options([
-                                'member' => 'Member',
-                                'administrator' => 'Administrator',
-                                'owner' => 'Owner',
-                            ])
-                            ->required(),
-                    ])
-                    ->columns(2),
-                Select::make('status')
-                    ->options([
-                        'enPreparation' => 'En préparation',
-                        'cache' => 'Caché',
-                        'Publie' => 'Publié',
-                    ])
-                    ->default('enPreparation')
-                    ->disabled(!request()->routeIs('filament.admin.resources.products.edit')),
+                        TextInput::make('text')->label('info'),
+                        RichEditor::make('value')->label('text')->toolbarButtons([
+                            'blockquote',
+                            'bold',
+                            'bulletList',
+                            'italic',
+                            'link',
+                            'orderedList',
+                            'redo',
+                            'strike',
+                            'underline',
+                            'undo',
+                        ])
+
+                    ]),
                 Select::make('product_type_id')
                     ->relationship(name: 'productType', titleAttribute: 'name')
                     ->label('type de produit')
                     ->searchable()
                     ->preload()
                     ->optionsLimit(20),
-
-
+                SpatieTagsInput::make('tags')
             ]);
     }
 
@@ -84,16 +85,23 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
+                CuratorColumn::make('images')
+            ->size(40)
+            ->ring(2) // options 0,1,2,4
+            ->overlap(4) // options 0,2,3,4
+            ->limit(3),
                 TextColumn::make('name')->label("nom"),
+                TextColumn::make('slug')->label("slug")->searchable(),
                 TextColumn::make('productType.name')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('old_price')->label("prix général")->suffix(' Francs cfa')->sortable(),
+                SpatieTagsColumn::make('tags'),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'enPreparation' => 'gray',
-                        'cache' => 'warning',
+                        'cache' => 'danger',
                         'Publie' => 'success'
                     })
                     ->sortable(),
@@ -109,19 +117,16 @@ class ProductResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
+                    ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
@@ -133,7 +138,16 @@ class ProductResource extends Resource
     {
         return [
             //
+            RelationManagers\VariantsRelationManager::class,
+            RelationManagers\KitsRelationManager::class,
+            RelationManagers\CollectionsRelationManager::class,
+            RelationManagers\AssociationsRelationManager::class,
         ];
+    }
+
+    protected function getTableQuery(): Builder
+    {
+        return parent::getTableQuery()->with(['featured_image', 'product_pictures']);
     }
 
     public static function getPages(): array
@@ -141,18 +155,7 @@ class ProductResource extends Resource
         return [
             'index' => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
-            'view' => Pages\Product::route('/{record}'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
-    }
-
-
 }

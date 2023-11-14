@@ -14,15 +14,15 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->foreignIdFor(Product::class);
             $table->string('name')->nullable();
-            $table->json('attribute_data');
-            $table->boolean('disponibility')->default(false);
             $table->integer('min_price')->default(0);
+            $table->json('attribute_data');
+            $table->boolean('disponibility')->default(true);
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('product_option_values');
+        Schema::dropIfExists('product_variants');
     }
 };

@@ -3,25 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CollectionResource\Pages;
-use App\Filament\Resources\CollectionResource\RelationManagers;
 use App\Models\Collection;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieTagsColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class CollectionResource extends Resource
 {
@@ -38,22 +35,16 @@ class CollectionResource extends Resource
                 //
                 CuratorPicker::make('featured_image_id')
                     ->relationship('featuredImage', 'id'),
-                TextInput::make('name')->required()->maxLength(50)
-               /*  ->live()
-                ->afterStateUpdated(fn ($component) => $form->schema([])), */,
+                TextInput::make('name')->required()->live(debounce: 1000)
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                TextInput::make('slug')->prefix('collection/'),
                 Select::make('collection_group_id')
                     ->relationship(name: 'group', titleAttribute: 'name')
                     ->label('group'),
                 Select::make('parent_id')
                     ->relationship(name: 'parent', titleAttribute: 'name')
                     ->label('collection parent'),
-                /* Repeater::make('members')
-                    ->schema([
-                        Select::make('parent_id')
-                    ->relationship(name: 'parent', titleAttribute: 'name')
-                    ->label('collection parent'),
-                    ]) ->reorderable(false) ->deletable(false)
- */
+                SpatieTagsInput::make('tags'),
 
             ]);
             return $form;
@@ -64,16 +55,17 @@ class CollectionResource extends Resource
         return $table
             ->columns([
                 CuratorColumn::make('featured_image_id')->size(50)->rounded(),
-                TextColumn::make('name')->label("nom"),
+                TextColumn::make('name')->label("nom")->searchable(),
+                TextColumn::make('slug')->label("slug")->searchable(),
+                SpatieTagsColumn::make('tags')->searchable(),
                 TextColumn::make('group.name')->label('groupe'),
+                ToggleColumn::make('active')
             ])
             ->filters([
                 //
             ])
             ->actions([
                 //Tables\Actions\EditAction::make(),
-                Action::make('voir')
-                ->url(fn (Collection $record): string => route('filament.admin.resources.collections.view', $record)),
                 Action::make('changer')
                 ->url(fn (Collection $record): string => route('filament.admin.resources.collections.edit', $record))
 

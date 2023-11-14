@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $product_id
  * @property array $attribute_data
  * @property string $name
+ * @property string $slug
  * @property bool $disponibility
  * @property int $min_price
  * @property ?\Illuminate\Support\Carbon $created_at
@@ -53,8 +54,4 @@ class ProductVariant extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function images()
-    {
-        return $this->belongsToMany(Media::class, "media_product_variant")->withTimestamps();
-    }
 }

@@ -18,6 +18,7 @@ class CreateProductAssociationsTable extends Migration
             $table->foreignId('product_parent_id')->constrained('products');
             $table->foreignId('product_target_id')->constrained('products');
             $table->string('type')->index();
+            $table->integer('times')->default(0);
             $table->timestamps();
         });
     }

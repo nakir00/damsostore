@@ -5,6 +5,10 @@ use App\Livewire\Admin\Accounts\Role\Roles;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Parametres\Marque\Marque;
 use App\Livewire\Admin\Parametres\Marque\Marques;
+use App\Livewire\Guest\Collection\CollectionPage;
+use App\Livewire\Guest\Product\ProductPage;
+use App\Livewire\Guest\Welcome\WelcomePage;
+use App\Models\Collection;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,7 +22,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+
+
 
 
 
@@ -50,42 +55,49 @@ Route::prefix('admin')->name('user.')->group(function () { */
 
 /* Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->name('dashboard');*/
 
 
+Route::prefix('')->name('')->group(function () {
+    Route::get('/', WelcomePage::class)->name('home');
+    Route::get('/collection/{slug}', CollectionPage::class)->name('collection');
+    Route::get('/product/{slug}',ProductPage::class)->name("product");
+});
 
-Route::prefix('admin')->name('admin.')->group(function () {*/
+
+Route::prefix('guest')->name('guest.')->group(function () {
+
+
 
     // Routes accessibles uniquement par les utilisateurs ayant le rôle "Admin"
-   // Route::middleware(['auth'/* , 'role:admin' */])->group(/* ['namespace' => 'App\Livewire\Admin'], */function () {
+    Route::middleware(['auth'/* , 'role:admin' */])->group(/* ['namespace' => 'App\Livewire\Admin'], */function () {
 
-    //    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+        Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
         // Routes  pour les comptes
-     //   Route::prefix('accounts')->name('accounts.')->group(function(){
+        Route::prefix('accounts')->name('accounts.')->group(function(){
             // Routes pour les roles dans les comptes
-      //      Route::prefix('roles')->name('roles.')->group(function(){
-      //          Route::get('/list', Roles::class)->name('index');
-       //         Route::get('/role/{role}',Role::class)->name('show');
-       //     });
-       // });
+            Route::prefix('roles')->name('roles.')->group(function(){
+                Route::get('/list', Roles::class)->name('index');
+                Route::get('/role/{role}',Role::class)->name('show');
+            });
+        });
 
-       // Route::prefix('parametres')->name('parametres.')->group(function(){
+        Route::prefix('parametres')->name('parametres.')->group(function(){
             // Routes pour les roles dans les comptes
-            //Route::prefix('marque')->name('marque.')->group(function(){
-                //Route::get('/list', Marques::class)->name('index');
-                //Route::get('/marque/{marque}',Marque::class)->name('show');
-            //});
-        //});
+            Route::prefix('marque')->name('marque.')->group(function(){
+                Route::get('/list', Marques::class)->name('index');
+                Route::get('/marque/{marque}',Marque::class)->name('show');
+            });
+        });
 
-   // });
+    });
 
 
-    // Routes accessibles par tous les utilisateurs authentifiés
-     //Route::middleware('auth')->group(/* ['namespace' => 'App\Livewire'] ,*/function () {
-        //Route::get('/profile', 'ProfileController@index')->name('profile');
-    //});
-//});
+     Route::middleware('auth')->group(/* ['namespace' => 'App\Livewire'] ,*/function () {
+        Route::get('/profile', 'ProfileController@index')->name('profile');
+    });
+});
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])

@@ -18,9 +18,11 @@ class CreateCollectionsTable extends Migration
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Media::class,'featured_image_id');
-            $table->foreignId('collection_group_id')->nullable()->constrained('collection_groups');
+            $table->foreignId('collection_group_id')->constrained('collection_groups');
             $table->string('name');
+            $table->string('slug');
             $table->integer('parent_id')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

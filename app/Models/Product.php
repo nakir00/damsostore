@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Spatie\Tags\HasTags;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,15 +10,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * @property int $id
  * @property int $product_type_id
  * @property ?int $collection_id
  * @property string $name
+ * @property string $slug
  * @property int $old_price
- * @property string status
- * @property array description
+ * @property string $status
+ * @property array $description
  * @property array $attribute_data
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
@@ -26,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+    use HasTags;
     use SoftDeletes;
 
     /**
@@ -58,6 +63,7 @@ class Product extends Model
      */
      protected $casts = [
         'description' => 'array',
+        'attribute_data' => 'array',
     ];
 
     /**
@@ -113,7 +119,6 @@ class Product extends Model
         )->withPivot(['position'])->withTimestamps();
     }
 
-
     public function collection()
     {
         return $this->belongsTo(Collection::class);
@@ -122,30 +127,44 @@ class Product extends Model
     /**
      * Return the associations relationship.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function associations()
+    public function associations():BelongsToMany
     {
-        return $this->hasMany(Product::class, 'product_parent_id');
+        return $this->belongsToMany(Product::class, 'product_associations','product_target_id','product_parent_id')->withPivot('type' ,'times' )->withTimestamps();
     }
 
     /**
      * Return the associations relationship.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function inverseAssociations()
+   /*  public function inverseAssociations()
     {
-        return $this->hasMany(Product::class, 'product_target_id');
+        return $this->belongsToMany(Product::class, 'product_associations','product_parent_id','product_target_id')->withPivot('type','times')->withTimestamps();
+    } */
+
+    public function images()
+    {
+        return $this->belongsToMany(Media::class, "media_product", 'product_id', 'media_id')->withPivot('order')->orderBy('order')->withTimestamps();
     }
 
-    public function productPictures(): BelongsToMany
+    public function kits():BelongsToMany
     {
-        return $this
-            ->belongsToMany(Media::class, 'media_product', 'product_id', 'media_id')
-            ->withPivot('order')
-            ->orderBy('order');
+        return $this->belongsToMany(kit::class,'kit_product','product_id','kit_id')->withTimestamps();;
     }
+
+    /**
+     * Return the product option relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function productOption():BelongsTo
+    {
+        return $this->belongsTo(ProductOption::class,'product_option_id','id');
+
+    }
+
 
     /**
      * Associate a product to another with a type.
