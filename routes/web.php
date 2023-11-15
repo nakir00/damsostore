@@ -26,28 +26,28 @@ use Illuminate\Support\Facades\Route;
 
 
 
-
-/* Route::prefix('admin')->name('admin.')->group(function () { */
+/*
+Route::prefix('client')->name('client.')->group(function () {
     // Routes accessibles uniquement par les utilisateurs ayant le rôle "Admin"
-    /* Route::middleware(['auth', 'role:admin'])->group(['namespace' => 'App\Livewire'],function () {
-        Route::get('/dashboard', '')->name('dashboard');
-        Route::get('/roles', '')->name('users');
-    }); */
+    Route::middleware(['auth', 'role:admin'])->group(['namespace' => 'App\Livewire'],function () {
+        Route::get('/dashboard', )->name('dashboard');
+        //Route::get('/roles', '')->name('users');
+    });
 
     // Routes accessibles par tous les utilisateurs authentifiés
-/*     Route::middleware('auth')->group(['namespace' => 'App\Livewire'],function () {
+    Route::middleware('auth')->group(['namespace' => 'App\Livewire'],function () {
         Route::get('/profile', 'ProfileController@index')->name('profile');
     });
 });
 
-Route::prefix('admin')->name('user.')->group(function () { */
+Route::prefix('admin')->name('user.')->group(function () {
     // Routes accessibles uniquement par les utilisateurs ayant le rôle "User"
-   /*  Route::middleware(['auth', 'role:user'])->group(['namespace' => 'App\Livewire'],function () {
+    Route::middleware(['auth', 'role:user'])->group(['namespace' => 'App\Livewire'],function () {
         Route::get('/dashboard', 'UserController@dashboard')->name('dashboard');
-    }); */
+    });
 
     // Routes accessibles par tous les utilisateurs authentifiés
-/*     Route::middleware('auth')->group(['namespace' => 'App\Livewire'],function () {
+    Route::middleware('auth')->group(['namespace' => 'App\Livewire'],function () {
         Route::get('/profile', 'ProfileController@index')->name('profile');
     });
 }); */
@@ -65,12 +65,12 @@ Route::prefix('')->name('')->group(function () {
 });
 
 
-Route::prefix('guest')->name('guest.')->group(function () {
+Route::prefix('client')->name('client.')->group(function () {
 
 
 
     // Routes accessibles uniquement par les utilisateurs ayant le rôle "Admin"
-    Route::middleware(['auth'/* , 'role:admin' */])->group(/* ['namespace' => 'App\Livewire\Admin'], */function () {
+    Route::middleware(['auth', 'role:client'])->group(/* ['namespace' => 'App\Livewire\Admin'], */function () {
 
         Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
