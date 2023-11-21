@@ -10,7 +10,7 @@
             {!!$slide['info']!!}
 
             <div class="relative flex items-center justify-center shadow-sm" style="background-color: {{$slide['primary']}};">
-                <a href="{{$slide['button_link']}}" class="outline-none transition duration-75 focus:ring-2 rounded-lg gap-1.5 px-3 py-2">
+                <a href="{{$slide['button_link']}}" class="outline-none transition duration-75 focus:ring-2 rounded-lg gap-1.5 px-3 py-2" wire:navigate>
                     <span class="font-semibold text-sm" style="color: {{$slide['secondary']}};">
                         {{$slide['button_message']}}
                     </span>

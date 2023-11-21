@@ -17,6 +17,7 @@
     </head>
 
     <body class="font-sans antialiased">
+        @livewire('notifications')
         <div class="min-h-screen">
 
             <div >

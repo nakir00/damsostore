@@ -17,6 +17,7 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen">
+            @livewire('notifications')
 
             <div >
                 <main>
@@ -28,7 +29,9 @@
                             {{ $slot }}
                         </main>
                     </div>
+                    @if (!request()->routeIs('client.*'))
                         <livewire:layout.footer>
+                    @endif
                 </main>
             </div>
         </div>

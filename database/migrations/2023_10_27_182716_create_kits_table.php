@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(CollectionGroup::class);
             $table->foreignIdFor(Media::class,'featured_image_id');
             $table->string('name')->index();
-            $table->string('slug')->index();
+            $table->string('slug')->unique()->index();
             $table->integer('total_price')->nullable();
             $table->integer('price')->index();
             $table->enum('status',['enPreparation','cache','Publie'])->default('enPreparation');

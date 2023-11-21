@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             'name'=>'Stock'
         ]);
 
-         $Pointure=ProductOption::factory()->create([
+        $Pointure=ProductOption::factory()->create([
             'name'=>'Pointure'
         ]);
 
@@ -43,5 +43,9 @@ class DatabaseSeeder extends Seeder
                 'product_option_id'=>$Pointure->id
             ]);
         }
+
+        $Pointure=ProductOption::factory()->create([
+            'name'=>'sans option'
+        ]);
     }
 }

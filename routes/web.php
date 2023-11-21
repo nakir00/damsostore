@@ -1,7 +1,11 @@
 <?php
 
+use App\Livewire\Admin\Accounts\Accounts;
+use App\Livewire\Admin\Accounts\DeleteUser;
 use App\Livewire\Admin\Accounts\Role\Role;
 use App\Livewire\Admin\Accounts\Role\Roles;
+use App\Livewire\Admin\Accounts\UpdatePassword;
+use App\Livewire\Admin\Accounts\UpdateProfile;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Parametres\Marque\Marque;
 use App\Livewire\Admin\Parametres\Marque\Marques;
@@ -10,6 +14,7 @@ use App\Livewire\Guest\Product\ProductPage;
 use App\Livewire\Guest\Welcome\WelcomePage;
 use App\Models\Collection;
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,12 +61,15 @@ Route::prefix('admin')->name('user.')->group(function () {
 /* Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');*/
-
+Route::get('/redirect', function(){
+return redirect(route('auth.login'));
+})->name('login');
 
 Route::prefix('')->name('')->group(function () {
     Route::get('/', WelcomePage::class)->name('home');
     Route::get('/collection/{slug}', CollectionPage::class)->name('collection');
     Route::get('/product/{slug}',ProductPage::class)->name("product");
+    Volt::route('checkout', 'guest.cart.checkout')->name('checkout');
 });
 
 
@@ -70,18 +78,12 @@ Route::prefix('client')->name('client.')->group(function () {
 
 
     // Routes accessibles uniquement par les utilisateurs ayant le rôle "Admin"
-    Route::middleware(['auth', 'role:client'])->group(/* ['namespace' => 'App\Livewire\Admin'], */function () {
+    Route::middleware(['auth', 'verified'])->group(/* ['namespace' => 'App\Livewire\Admin'], */function () {
 
         Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
         // Routes  pour les comptes
-        Route::prefix('accounts')->name('accounts.')->group(function(){
-            // Routes pour les roles dans les comptes
-            Route::prefix('roles')->name('roles.')->group(function(){
-                Route::get('/list', Roles::class)->name('index');
-                Route::get('/role/{role}',Role::class)->name('show');
-            });
-        });
+        Route::get('/accounts', Accounts::class)->name('accounts');
 
         Route::prefix('parametres')->name('parametres.')->group(function(){
             // Routes pour les roles dans les comptes
@@ -94,9 +96,9 @@ Route::prefix('client')->name('client.')->group(function () {
     });
 
 
-     Route::middleware('auth')->group(/* ['namespace' => 'App\Livewire'] ,*/function () {
-        Route::get('/profile', 'ProfileController@index')->name('profile');
-    });
+     //Route::middleware('auth')->group(/* ['namespace' => 'App\Livewire'] ,*/function () {
+       // Route::get('/profile', 'ProfileController@index')->name('profile');
+    //});
 });
 
 Route::view('profile', 'profile')

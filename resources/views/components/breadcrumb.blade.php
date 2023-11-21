@@ -6,7 +6,7 @@
         <nav class="mx-auto" aria-label="Breadcrumb">
             <ol class="bg-white font-semibold flex ">
                 <li class="flex items-center">
-                    <a href="{{ route('home') }}" class="text-gray-600 text-xs hover:underline hover:text-black">
+                    <a href="{{ route('home') }}" class="text-gray-600 text-xs hover:underline hover:text-black" wire:navigate>
                         Accueil
                     </a>
                     <svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true" class="h-5 w-4 text-gray-300">
@@ -17,13 +17,13 @@
                 @foreach($breadcrumbs as $breadcrumb)
                     <li class="flex items-center">
                         @if ($loop->first)
-                        <a href="{{route('collection',['slug'=>$breadcrumb['slug'],'g'])}}">
+                        <a href="{{route('collection',['slug'=>$breadcrumb['slug'],'g'])}}" wire:navigate>
                             <span class="text-gray-600 text-sm hover:underline hover:text-black">
                                 {{ $breadcrumb['label'] }}
                             </span>
                         </a>
                         @else
-                        <a href="{{route('collection',['slug'=>$breadcrumb['slug']])}}">
+                        <a href="{{route('collection',['slug'=>$breadcrumb['slug']])}}" wire:navigate>
                             <span class="text-gray-600 text-sm hover:underline hover:text-black">
                                 {{ $breadcrumb['label'] }}
                             </span>

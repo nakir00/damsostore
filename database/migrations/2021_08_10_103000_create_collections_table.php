@@ -20,7 +20,7 @@ class CreateCollectionsTable extends Migration
             $table->foreignIdFor(Media::class,'featured_image_id');
             $table->foreignId('collection_group_id')->constrained('collection_groups');
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->integer('parent_id')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();

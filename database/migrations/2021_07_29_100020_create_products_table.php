@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->foreignId('product_type_id')->constrained('product_types');
             $table->foreignIdFor(Collection::class)->default(null)->nullable();
             $table->string('name')->index();
-            $table->string('slug')->index();
+            $table->string('slug')->unique()->index();
             $table->json('description')->nullable();
             $table->json('attribute_data')->nullable();
             $table->integer('old_price')->nullable()->default(0);

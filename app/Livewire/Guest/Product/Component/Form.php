@@ -47,6 +47,7 @@ class Form extends Component
     #[on('added')]
     public function addToCart($added=null)
     {
+
         if(!empty($this->form['products']))
         {
             $this->validate(
@@ -74,18 +75,16 @@ class Form extends Component
                     $mot=$mot.'-'.$terme;
                 }
                 $this->form['quantity']=$this->quantity;
-                $toSend=["name" =>$this->form['name'],"slug" =>$this->form['name'],"price" =>$this->form['price'],"url" =>$this->form['products'][0]['url'],'products'=>$this->form['products'],'options'=>['name'=>'kit'],'option'=>$mot,'quantity'=>$this->quantity,'kit'=>'k'];
+                $toSend=["name" =>$this->form['name'],"slug" =>$this->form['slug'],"price" =>$this->form['price'],"url" =>$this->form['url'],'products'=>$this->form['products'],'options'=>['name'=>'kit'],'option'=>$mot,'quantity'=>$this->quantity,'kit'=>'k'];
                 $this->dispatch('addedProduct',$toSend);
         }elseif(!empty($this->form['variants'])&&array_key_exists('values',$this->form['variants']))
         {
-            //dd($this->quantity,$this->objet,$this->form['variants']);
             $this->objet['options']=$this->form['variants'];
             $this->objet['quantity']=$this->quantity;
             $this->dispatch('addedProduct',$this->objet);
         }elseif($added!==null)
         {
             $added['quantity']=$this->quantity;
-            $added['slog']=$added['slug'];
             $this->dispatch('addedProduct',$added);
         }
     }

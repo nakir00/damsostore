@@ -6,7 +6,8 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
 use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
+new #[Layout('layouts.auth')]
+class extends Component
 {
     #[Rule(['required', 'string'])]
     public string $password = '';

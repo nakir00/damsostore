@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Lunar\Base\Addressable;
+use Illuminate\Database\Eloquent\Model;
+/* use Lunar\Base\Addressable;
 use Lunar\Base\BaseModel;
 use Lunar\Base\Traits\HasMacros;
-use Lunar\Database\Factories\AddressFactory;
+use Lunar\Database\Factories\AddressFactory; */
 
 /**
  * @property int $id
- * @property int $customer_id
+ * @property int $user
  * @property ?string $title
  * @property string $first_name
  * @property string $last_name
@@ -33,18 +34,11 @@ use Lunar\Database\Factories\AddressFactory;
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  */
-class Address extends BaseModel implements Addressable
+class Address extends Model
 {
-    use HasFactory, HasMacros;
+    use HasFactory;
 
-    /**
-     * Return a new factory instance for the model.
 
-    *protected static function newFactory(): AddressFactory
-    *{
-     *   return AddressFactory::new();
-    *}
-    */
     /**
      * Define which attributes should be
      * protected from mass assignment.
@@ -60,27 +54,17 @@ class Address extends BaseModel implements Addressable
      */
     protected $casts = [
         'billing_default' => 'boolean',
-        'meta' => AsArrayObject::class,
+        'meta' => 'array',
         'shipping_default' => 'boolean',
     ];
-
-    /**
-     * Return the country relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    /* public function country()
-    {
-        return $this->belongsTo(Country::class);
-    } */
 
     /**
      * Return the customer relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function customer()
+    public function user()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(User::class);
     }
 }

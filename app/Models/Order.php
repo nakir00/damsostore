@@ -5,30 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @property int $id
- * @property ?int $customer_id
  * @property ?int $user_id
- * @property int $channel_id
- * @property bool $new_customer
+ * @property ?int $address_id
  * @property string $status
- * @property ?string $reference
- * @property ?string $customer_reference
- * @property int $sub_total
- * @property int $discount_total
- * @property array $discount_breakdown
- * @property array $shipping_breakdown
- * @property array $tax_breakdown
- * @property int $tax_total
  * @property int $total
  * @property ?string $notes
- * @property string $currency
- * @property ?string $compare_currency_code
- * @property float $exchange_rate
+ * @property ?\Illuminate\Support\Carbon $date_commande
+ * @property ?\Illuminate\Support\Carbon $date_confirmation
+ * @property ?\Illuminate\Support\Carbon $date_livraison
  * @property ?\Illuminate\Support\Carbon $placed_at
- * @property ?array $meta
+ * @property ?array $attribute_data
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  */
@@ -40,17 +31,8 @@ class Order extends Model
      * {@inheritDoc}
      */
     protected $casts = [
-        'tax_breakdown' => TaxBreakdown::class,
-        'meta' => AsArrayObject::class,
+        'attribute_data' => 'array',
         'placed_at' => 'datetime',
-        'sub_total' => Price::class,
-        'discount_total' => Price::class,
-        'discount_breakdown' => DiscountBreakdown::class,
-        'shipping_breakdown' => ShippingBreakdown::class,
-        'tax_total' => Price::class,
-        'total' => Price::class,
-        'shipping_total' => Price::class,
-        'new_customer' => 'boolean',
     ];
 
     /**
@@ -59,174 +41,25 @@ class Order extends Model
     protected $guarded = [];
 
     /**
-     * Return a new factory instance for the model.
-     */
-  /*   protected static function newFactory(): OrderFactory
-    {
-        return OrderFactory::new();
-    } */
-
-    /**
-     * Getter for status label.
-     *
-     * @return string
-     */
-    /* public function getStatusLabelAttribute()
-    {
-        $statuses = config('lunar.orders.statuses');
-
-        return $statuses[$this->status]['label'] ?? $this->status;
-    } */
-
-    /**
-     * Return the channel relationship.
-     *
-     * @return void
-     */
-/*     public function channel()
-    {
-        return $this->belongsTo(Channel::class);
-    }
- */
-    /**
-     * Return the cart relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function cart()
-    {
-        return $this->belongsTo(Cart::class);
-    }
-
-    /**
      * Return the lines relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function lines()
+    public function orderables()
     {
-        return $this->hasMany(OrderLine::class);
+        return $this->hasMany(Ord::class);
     }
 
-    /**
-     * Return physical product lines relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function physicalLines()
-    {
-        return $this->lines()->whereType('physical');
-    }
-
-    /**
-     * Return digital product lines relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function digitalLines()
-    {
-        return $this->lines()->whereType('digital');
-    }
-
-    /**
-     * Return shipping lines relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function shippingLines()
-    {
-        return $this->lines()->whereType('shipping');
-    }
-
-    /**
-     * Return product lines relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function productLines()
-    {
-        return $this->lines()->where('type', '!=', 'shipping');
-    }
-
-    /**
-     * Return the currency relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-  /*   public function currency()
-    {
-        return $this->belongsTo(Currency::class, 'currency_code', 'code');
-    } */
-
-    /**
-     * Return the addresses relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function addresses()
-    {
-        return $this->hasMany(OrderAddress::class, 'order_id');
-    }
 
     /**
      * Return the shipping address relationship.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function shippingAddress()
+    public function Address():BelongsTo
     {
-        return $this->hasOne(OrderAddress::class, 'order_id')->whereType('shipping');
+        return $this->belongsTo(Address::class, 'address_id');
     }
-
-    /**
-     * Return the billing address relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function billingAddress()
-    {
-        return $this->hasOne(OrderAddress::class, 'order_id')->whereType('billing');
-    }
-
-    /**
-     * Return the transactions relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
- /*    public function transactions()
-    {
-        return $this->hasMany(Transaction::class);
-    } */
-
-    /**
-     * Return the charges relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
- /*    public function captures()
-    {
-        return $this->transactions()->whereType('capture');
-    }
- */
-    /**
-     * Return the charges relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-   /*  public function intents()
-    {
-        return $this->transactions()->whereType('intent');
-    }
- */
-    /**
-     * Return the refunds relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-/*     public function refunds()
-    {
-        return $this->transactions()->whereType('refund');
-    } */
 
     /**
      * Return the customer relationship.
@@ -235,34 +68,27 @@ class Order extends Model
      */
     public function customer()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
-    /**
-     * Return the user relationship.
+        /**
+     * Get all of the posts that are assigned this ProductVariant.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function user()
+    public function products(): MorphToMany
     {
-        return $this->belongsTo(
-            User::class
-        );
+        return $this->morphedByMany(ProductVariant::class, 'orderable');
     }
 
     /**
-     * Determines if this is a draft order.
+     * Get all of the videos that are assigned this kit.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
- /*    public function isDraft(): bool
+    public function kits(): MorphToMany
     {
-        return ! $this->isPlaced();
-    } */
+        return $this->morphedByMany(kit::class, 'orderable');
+    }
 
-    /**
-     * Determines if this is a placed order.
-     */
- /*    public function isPlaced(): bool
-    {
-        return ! blank($this->placed_at);
-    } */
 }

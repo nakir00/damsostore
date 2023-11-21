@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Address;
+use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
@@ -10,24 +12,28 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
-            //$table->userForeignKey(nullable: true);
-            $table->foreignId('user_id')->constrained('users')->nullable()->onUpdate('cascade');
+            $table->foreignIdFor(User::class)->nullable();
+            $table->foreignIdFor(Address::class);
             //$table->foreignId('channel_id')->constrained('channels');
-            $table->string('status')->index();
-            $table->string('reference')->nullable()->unique();
-            $table->string('customer_reference')->nullable();
-            $table->integer('sub_total')->unsigned()->index();
-            $table->integer('discount_total')->default(0)->unsigned()->index();
-            $table->integer('shipping_total')->default(0)->unsigned()->index();
+            $table->enum('status',['enAttente','confirme','enLivraison','livre','annule'])->default('enAttente');
+            //$table->string('reference')->nullable()->unique();
+            //$table->string('customer_reference')->nullable();
+            //$table->unsignedBigInteger('sub_total')->index();
+            //$table->unsignedBigInteger('discount_total')->index();
+            //$table->integer('shipping_total')->default(0)->unsigned()->index();
             //$table->json('tax_breakdown');
             //$table->integer('tax_total')->unsigned()->index();
-            $table->integer('total')->unsigned()->index();
+            $table->unsignedBigInteger('total')->index();
             $table->text('notes')->nullable();
+            $table->timestamp('date_commande')->nullable();
+            $table->timestamp('date_confirmation')->nullable();
+            $table->timestamp('date_livraison')->nullable();
+            $table->timestamp('date_annulation')->nullable();
             //$table->string('currency_code', 3);
             //$table->string('compare_currency_code', 3)->nullable();
             //$table->decimal('exchange_rate', 10, 4)->default(1);
             $table->dateTime('placed_at')->nullable()->index();
-            $table->json('meta')->nullable();
+            $table->json('attribute_data')->nullable();
             $table->timestamps();
         });
     }

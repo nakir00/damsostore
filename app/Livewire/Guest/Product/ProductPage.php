@@ -156,6 +156,7 @@ class ProductPage extends Component
                 'breadcrumb'=>["kit"=>['label'=>$this->product['collection_group']['name'],'slug'=>$this->product['collection_group']['slug']]],
                 'variants'=>[],
                 'products'=>$this->getProducts($this->product['products']),
+                'url'=>config('app.url').$this->product['featured_image']['large_url']
             ];
         }else{
             $datas=[

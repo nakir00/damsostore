@@ -1,54 +1,23 @@
 <?php
 
-use function Livewire\Volt\{state, mount,on};
+use function Livewire\Volt\{state, rendered,on};
+use Illuminate\Support\Facades\Session;
 
-//
     state(['visible'=>false, 'cart'=>null,'nombre'=>0,'somme'=>0]);
-
-    $initCart = fn () => $this->cart=['lines'=>[],'subTotal'=>0];
-    $emptyCart = fn () => $this->cart=null;
+    $session=fn()=>dd(Session::all());
+    $initCart = function () {$this->cart=['lines'=>[],'subTotal'=>0];Session::put('cart',$this->cart);$this->dispatch('checkOutUpdate');};
+    $emptyCart = function(){$this->cart=null;Session::forget('cart');$this->dispatch('checkOutUpdate');};
     $countCart=function(){if($this->cart!==null){return count($this->cart['lines']);}return 0;};
-    $removeOne=function($key){unset($this->cart['lines'][$key]);$this->dispatch('mountNombre')->self();$this->dispatch('mountSomme')->self();if(empty($this->cart['lines'])){$this->emptyCart();}};
-    $plus=function($key){$this->cart['lines'][$key]['quantity']+=1;$this->dispatch('mountNombre')->self();$this->dispatch('mountSomme')->self();};
-    $minus=function($key){if($this->cart['lines'][$key]['quantity']===1){$this->removeOne($key);return;}$this->cart['lines'][$key]['quantity']-=1;$this->dispatch('mountNombre')->self();$this->dispatch('mountSomme')->self();};
+    $removeOne=function($key){ unset($this->cart['lines'][$key]);$k="cart.lines.".$key;Session::forget($k);$this->dispatch('mountNombre')->self();$this->dispatch('mountSomme')->self();if(empty($this->cart['lines'])){$this->emptyCart();};$this->dispatch('checkOutUpdate');};
+    $plus=function($key){$this->cart['lines'][$key]['quantity']+=1;$this->dispatch('mountNombre')->self();$this->dispatch('mountSomme')->self();$cle='cart.lines.'.$key.'.quantity';$q=Session::get($cle);Session::put($cle,$q+1);$this->dispatch('checkOutUpdate');};
+    $minus=function($key){if($this->cart['lines'][$key]['quantity']===1){$this->removeOne($key);return;}$this->cart['lines'][$key]['quantity']-=1;$cle='cart.lines.'.$key.'.quantity';$q=Session::get($cle);Session::put($cle,$q-1);$this->dispatch('mountNombre')->self();$this->dispatch('mountSomme')->self();$this->dispatch('checkOutUpdate');};
     $somme=function(){if($this->cart!==null){$somme=0;foreach ($this->cart['lines'] as $value) {$somme+=$value['price']*$value['quantity'];}return$somme;}};
 
     on([
-        'addedProduct'=>function(array $value){
-            if ($this->cart===null) {
-                $this->initCart();
-                $this->visible=true;
-            }elseif (is_array($this->cart)) {
-                if(!array_key_exists('options',$value))
-                {
-                    $value['options']=['name'=>'produit'];
-                }
-                if(array_key_exists($value["slug"].'.'.$value['option'],$this->cart['lines']))
-                {
-                    $this->plus($value["slug"].'.'.$value['option']);
-                    $this->visible=true;
-                    return;
-                }
-            }
-
-            if(!array_key_exists('options',$value)&&!array_key_exists('products',$value))
-            {
-                $value['options']=['name'=>'produit'];
-                $this->cart['lines'][$value["slug"].'.'.$value['option']]=$value;
-            }
-            elseif(array_key_exists('options',$value)){
-                $this->cart['lines'][$value["slug"].'.'.$value['option']]=$value;
-
-            }elseif (array_key_exists('products',$value)) {
-                dd($value);
-                $this->cart['lines'][$value["slug"].'.'.$value['option']]=$value;
-            }
-            $this->dispatch('mountNombre')->self();
-            $this->dispatch('mountSomme')->self();
-            $this->visible=true;
-        },
+        'addedProduct'=>function(array $value){if ($this->cart===null) {$this->initCart();$this->visible=true;}elseif (is_array($this->cart)) {if(!array_key_exists('options',$value)){$value['options']=['name'=>'produit'];}if(array_key_exists($value["slug"].'.'.$value['option'],$this->cart['lines'])){$this->plus($value["slug"].'.'.$value['option']);$this->visible=true;return;}}if(!array_key_exists('options',$value)&&!array_key_exists('products',$value)){$value['options']=['name'=>'produit'];$this->cart['lines'][$value["slug"].'.'.$value['option']]=$value;$key="cart.lines.".$value["slug"].'.'.$value['option'];Session::put($key,$value);}elseif(array_key_exists('options',$value)){$this->cart['lines'][$value["slug"].'.'.$value['option']]=$value;$key="cart.lines.".$value["slug"].'.'.$value['option'];Session::put($key,$value);}elseif (array_key_exists('products',$value)) {$this->cart['lines'][$value["slug"].'.'.$value['option']]=$value;$key="cart.lines.".$value["slug"].'.'.$value['option'];Session::put($key,$value);}$this->dispatch('mountNombre')->self();$this->dispatch('mountSomme')->self();$this->visible=true;$this->dispatch('checkOutUpdate');},
         'mountNombre'=>fn()=>$this->nombre=$this->countCart(),
         'mountSomme'=>fn()=>$this->somme=$this->somme(),
+        'mountSession'=>function(){if($this->cart!==null&&!Session::has('cart')){Session::put('cart',['lines'=>[],'subTotal'=>0]);foreach ($this->cart['lines'] as $key => $value){$k='cart.lines.'.$key;Session::put($k,$value);}$this->dispatch('checkOutUpdate');}},
     ]);
 
 ?>
@@ -61,6 +30,7 @@ use function Livewire\Volt\{state, mount,on};
     x-init="
         $dispatch('mountNombre');
         $dispatch('mountSomme');
+        $dispatch('mountSession');
     "
      >
 
@@ -205,8 +175,8 @@ use function Livewire\Volt\{state, mount,on};
                             </dd>
                         </dl>
                         <div class="flex flex-col items-center" >
-{{--                             <progress  class="w-full h-4 rounded-md bg-gray-600 " value="50" max="100"></progress>
- --}}                   </div>
+                             <progress  class="w-full"  value="{{$somme}}" max="75000"></progress>
+                       </div>
 
 
                     @else
@@ -225,7 +195,7 @@ use function Livewire\Volt\{state, mount,on};
                         </button> --}}
 
                         <a class="block w-full p-3 text-sm font-medium text-center text-white bg-black rounded-lg hover:bg-gray-600 "
-                        href="{{ route('home') }}">
+                        href="{{ route('checkout') }}">
                             commander
                         </a>
 
@@ -233,6 +203,11 @@ use function Livewire\Volt\{state, mount,on};
 
                             Continuer mes achats
                         </button>
+                        <button class="inline-block text-sm font-medium text-gray-600 underline hover:text-gray-500" wire:click="session()" >
+
+                            Continuer mes achats
+                        </button>
+
                     </div>
                 @endif
         </div>

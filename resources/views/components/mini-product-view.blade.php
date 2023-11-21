@@ -8,7 +8,7 @@
     <div class="flex py-4" >
         <img class="object-cover w-16 h-16 rounded" src="{{ $product['url'] }}">
         <div class="flex-1 ml-4">
-            <a class="max-w-[20ch] hover:underline text-sm font-medium" href="{{route('product',['slug'=> $product['slug'] ] )}}" >
+            <a class="max-w-[20ch] hover:underline text-sm font-medium" href="{{route('product',['slug'=> $product['slug'] ] )}}" wire:navigate>
                 {{ $product['name'] }}
             </a>
             <span class="block mt-1 text-xs text line-through text-gray-500">

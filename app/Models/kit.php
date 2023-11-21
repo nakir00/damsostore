@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @property int $id
@@ -52,5 +53,13 @@ class kit extends Model
             Product::class,
             'kit_product'
         )->withTimestamps();
+    }
+
+    /**
+     * Get all of the tags for the post.
+     */
+    public function orders(): MorphToMany
+    {
+        return $this->morphToMany(Order::class, 'orderable');
     }
 }

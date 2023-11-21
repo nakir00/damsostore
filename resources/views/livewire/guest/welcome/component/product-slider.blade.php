@@ -27,7 +27,7 @@ class=" my-20">
             <div class="flex items-center ml-3">
 
                 <div class="relative flex items-center justify-center bg-white" >
-                    <a href="collection/{{$collection['slug']}}" class="outline-none transition duration-75  gap-1.5 px-3 py-2">
+                    <a href="collection/{{$collection['slug']}}" class="outline-none transition duration-75  gap-1.5 px-3 py-2" wire:navigate>
                         <span class="font-semibold text-sm text-black" >
                             Voir Plus
                         </span>

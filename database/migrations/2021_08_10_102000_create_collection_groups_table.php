@@ -15,7 +15,7 @@ class CreateCollectionGroupsTable extends Migration
             $table->bigIncrements('id');
             $table->foreignIdFor(Media::class,'featured_image_id');
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->json('attribute_data')->nullable();
             $table->boolean('onNavBar')->default(true);
             $table->timestamps();

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @property int $id
@@ -165,6 +166,13 @@ class Product extends Model
 
     }
 
+    /**
+     * Get all of the tags for the post.
+     */
+    public function orders(): MorphToMany
+    {
+        return $this->morphToMany(Order::class, 'orderable');
+    }
 
     /**
      * Associate a product to another with a type.
