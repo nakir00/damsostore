@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class collectionsSlider extends Model
+class CollectionsSlider extends Model
 {
     use HasFactory;
 
@@ -16,7 +16,7 @@ class collectionsSlider extends Model
 
     public function home(): BelongsTo
     {
-        return $this->belongsTo(home::class);
+        return $this->belongsTo(Home::class);
     }
 
     public function collectionable(): MorphTo

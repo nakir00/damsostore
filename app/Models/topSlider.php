@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  */
-class topSlider extends Model
+class TopSlider extends Model
 {
     use HasFactory;
 
@@ -31,7 +31,7 @@ class topSlider extends Model
 
     public function home(): BelongsTo
     {
-        return $this->belongsTo(home::class);
+        return $this->belongsTo(Home::class);
     }
 
     public function featuredImage(): BelongsTo

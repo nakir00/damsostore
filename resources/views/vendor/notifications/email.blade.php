@@ -1,56 +1,69 @@
-{{-- Greeting --}}
-@if (! empty($greeting))
-# {{ $greeting }}
-@else
-@if ($level === 'error')
-# @lang('Whoops!')
-@else
-# @lang('Hello!')
-@endif
-@endif
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Damsostore Mail </title>
+        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="flex items-center justify-center min-h-screen p-5 bg-black min-w-screen">
+            <div class="max-w-xl p-8 text-center text-gray-800 bg-white shadow-xl lg:max-w-3xl rounded-3xl lg:p-12">
+                <div class="flex w-full justify-center my-6">
+                    <svg class="flex-no-shrink fill-black w-16 h-16"  version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 641.000000 641.000000" preserveAspectRatio="xMidYMid meet">
+                        <g transform="translate(0.000000,641.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+                            <path d="M2907 6245 c-359 -38 -742 -148 -1047 -300 -69 -35 -141 -71 -160 -80 -74 -38 -322 -207 -431 -296 -208 -170 -433 -411 -583 -626 -90 -129 -217 -357 -285 -511 -318 -725 -339 -1533 -60 -2280 55 -147 158 -363 229 -477 23 -38 52 -86 63 -105 12 -19 24 -37 27 -40 4 -3 21 -27 40 -55 76 -113 206 -269 329 -394 434 -439 991 -737 1611 -861 187 -37 311 -51 525 -57 768 -21 1514 246 2100 751 202 174 446 454 570 653 326 523 478 1045 479 1638 1 249 -11 361 -64 634 -20 106 -95 349 -147 481 -150 375 -369 711 -663 1013 -370 382 -817 646 -1372 811 -106 32 -243 61 -413 87 -176 27 -555 34 -748 14z m698 -181 c373 -52 668 -145 984 -310 303 -158 597 -385 813 -628 382 -429 610 -905 710 -1481 20 -115 22 -165 23 -430 0 -321 -8 -402 -61 -640 -166 -748 -653 -1420 -1319 -1822 -642 -387 -1435 -512 -2180 -342 -315 72 -633 204 -907 376 -98 62 -215 143 -242 168 -6 6 -43 36 -82 67 -77 62 -305 293 -369 373 -22 27 -48 59 -59 70 -10 11 -62 86 -116 168 -319 478 -480 1010 -480 1582 0 422 78 789 249 1174 95 215 264 486 401 645 137 159 179 202 354 359 17 15 72 58 121 96 453 346 998 551 1574 591 162 11 445 3 586 -16z"/>
+                            <path d="M3085 5314 c-214 -13 -427 -44 -570 -86 -38 -11 -83 -23 -100 -28 -50 -13 -135 -45 -230 -85 -348 -148 -647 -376 -853 -651 -190 -252 -297 -502 -337 -782 -25 -174 -17 -305 24 -435 65 -201 192 -387 302 -442 106 -54 172 -52 238 9 103 95 69 184 -110 281 -145 80 -256 229 -280 376 -40 252 39 542 225 823 185 278 426 485 751 645 295 146 556 205 900 206 470 0 759 -125 1045 -453 l55 -63 42 15 c70 25 223 54 321 62 50 3 92 11 92 17 0 5 -42 52 -92 104 -228 233 -464 358 -833 442 -135 30 -441 53 -590 45z"/>
+                            <path d="M3040 4875 c-74 -19 -448 -82 -532 -90 -74 -7 -83 -14 -93 -67 l-7 -38 57 0 c31 0 65 -5 76 -10 33 -18 52 -67 44 -119 -11 -76 -244 -993 -310 -1221 -18 -63 -45 -158 -58 -210 -72 -275 -160 -526 -250 -709 -28 -55 -100 -137 -140 -157 -17 -9 -89 -22 -166 -30 -75 -8 -141 -16 -148 -19 -10 -3 -63 -94 -63 -107 0 -2 165 -4 368 -4 233 -1 446 -8 582 -18 329 -25 561 -31 675 -17 239 29 411 71 625 154 108 42 268 121 305 150 6 4 42 30 80 58 232 164 464 439 601 711 63 124 116 279 143 413 12 61 27 133 33 160 14 65 14 348 -1 401 -15 54 -42 88 -99 121 -42 25 -59 28 -152 31 -88 3 -116 0 -170 -18 -36 -12 -75 -28 -86 -35 -21 -14 -21 -15 -5 -77 12 -49 16 -114 16 -303 -1 -220 -3 -250 -27 -365 -93 -447 -351 -820 -718 -1041 -224 -135 -496 -206 -820 -216 -172 -5 -331 6 -472 33 -34 7 -37 33 -9 72 17 25 111 216 111 227 0 2 11 28 24 57 31 69 105 274 149 413 60 191 196 699 203 760 1 11 16 76 34 145 18 69 38 152 45 185 30 133 125 476 155 560 29 80 80 228 80 232 0 5 -23 2 -80 -12z"/>
+                            <path d="M4415 4541 c-315 -57 -600 -233 -788 -489 -57 -78 -126 -213 -158 -312 -20 -64 -24 -94 -24 -205 1 -119 3 -138 33 -225 40 -122 100 -223 194 -330 72 -81 161 -170 172 -170 2 0 37 43 77 96 68 90 169 268 169 297 0 7 -33 50 -74 96 -116 130 -164 233 -173 367 -13 201 59 379 213 525 171 161 341 224 583 217 115 -3 131 -6 184 -33 67 -33 145 -111 180 -181 50 -98 57 -209 32 -479 -11 -125 -12 -161 -2 -167 20 -13 107 -9 112 5 7 19 15 77 21 142 3 33 14 103 24 155 10 52 22 124 25 160 8 70 38 201 79 345 14 50 26 97 26 106 0 16 -40 24 -380 75 -200 29 -378 31 -525 5z"/>
+                            <path d="M4544 2633 c-21 -27 -91 -100 -156 -164 l-117 -115 45 -88 c54 -103 61 -125 74 -234 30 -240 -93 -491 -334 -681 -172 -135 -336 -201 -550 -221 -191 -18 -328 9 -450 90 -112 75 -154 151 -233 420 -32 111 -78 169 -151 191 -91 27 -197 -27 -247 -126 -26 -51 -30 -70 -30 -135 1 -66 6 -86 38 -154 95 -199 355 -371 662 -438 79 -17 364 -17 480 1 413 61 824 289 1032 572 61 83 136 232 174 344 32 95 34 107 33 240 0 121 -3 149 -23 205 -50 138 -167 339 -197 340 -7 0 -29 -21 -50 -47z"/>
+                        </g>
+                    </svg>
+                </div>
+                @if (! empty($greeting))
+                <h3 class="text-2xl flex w-full justify-center mb-3">{{ $greeting }}</h3>
+                @else
+                    @if ($level === 'error')
+                    # <h3 class="text-2xl flex w-full justify-center mb-3">Bonjour !</h3>
+                    @else
+                    <h3 class="text-2xl flex w-full justify-center mb-3">Bonjour, c'est Damsostore.</h3>
+                    @endif
+                @endif
+                <div class="mt-12">
+                    @foreach ($introLines as $line)
+                    <div class="my-2">
+                        <p>{{ $line }}</p>
+                    </div>
+                    @endforeach
+                </div>
+                @isset($actionText)
+                <div class="mt-8">
+                    <a href="{{$actionUrl}}" class="px-2 py-2 mt-4 bg-black rounded"><span class="text-white break-words">{{ $actionText }}</span></a>
+                </div>
 
-{{-- Intro Lines --}}
-@foreach ($introLines as $line)
-{{ $line }}
-
-@endforeach
-
-{{-- Action Button --}}
-@isset($actionText)
-<?php
-    $color = match ($level) {
-        'success', 'error' => $level,
-        default => 'primary',
-    };
-?>
-<x-mail::button :url="$actionUrl" :color="$color">
-{{ $actionText }}
-</x-mail::button>
-@endisset
-
-{{-- Outro Lines --}}
-@foreach ($outroLines as $line)
-{{ $line }}
-
-@endforeach
-
-{{-- Salutation --}}
-@if (! empty($salutation))
-{{ $salutation }}
-@else
-@lang('Regards'),<br>
-{{ config('app.name') }}
-@endif
-
-{{-- Subcopy --}}
-@isset($actionText)
-<x-slot:subcopy>
-@lang(
-    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".
-    'into your web browser:',
-    [
-        'actionText' => $actionText,
-    ]
-) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
-</x-slot:subcopy>
-@endisset
+                <div class="mt-8">
+                    <p class="break-words text-xs">
+                        Si vous ne parvenez pas à cliquer sur le bouton, copiez et collez l'URL ci-dessous dans votre navigateur Web :
+                        <a href="{{$actionUrl}}" class="text-black hover:text-gray-600 break-words underline">{{$actionUrl}}</a>
+                    </p>
+                </div>
+                @endisset
+                <div class="mt-12">
+                    @foreach ($outroLines as $line)
+                    <div class="my-2">
+                        <p>{{ $line }}</p>
+                    </div>
+                    @endforeach
+                </div>
+                <div class="mt-12">
+                    @if (! empty($salutation))
+                        <p>{{ $salutation }}</p>
+                    @else
+                        @lang('Cordialement'),
+                        {{ config('app.name') }}.
+                    @endif
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

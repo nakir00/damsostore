@@ -16,11 +16,11 @@ class CreateOrdersTable extends Migration
             $table->foreignIdFor(Address::class);
             //$table->foreignId('channel_id')->constrained('channels');
             $table->enum('status',['enAttente','confirme','enLivraison','livre','annule'])->default('enAttente');
-            //$table->string('reference')->nullable()->unique();
+            $table->string('reference')->nullable()->unique();
             //$table->string('customer_reference')->nullable();
-            //$table->unsignedBigInteger('sub_total')->index();
-            //$table->unsignedBigInteger('discount_total')->index();
-            //$table->integer('shipping_total')->default(0)->unsigned()->index();
+            $table->unsignedBigInteger('sub_total')->index();
+            $table->unsignedBigInteger('discount_total')->index();
+            $table->integer('shipping_total')->nullable()->unsigned()->index();
             //$table->json('tax_breakdown');
             //$table->integer('tax_total')->unsigned()->index();
             $table->unsignedBigInteger('total')->index();
@@ -32,7 +32,7 @@ class CreateOrdersTable extends Migration
             //$table->string('currency_code', 3);
             //$table->string('compare_currency_code', 3)->nullable();
             //$table->decimal('exchange_rate', 10, 4)->default(1);
-            $table->dateTime('placed_at')->nullable()->index();
+            $table->date('date')->nullable()->index();
             $table->json('attribute_data')->nullable();
             $table->timestamps();
         });

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\home;
+use App\Models\Home;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('top_sliders', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Media::class,'featured_image_id');
-            $table->foreignIdFor(home::class);
-            $table->string('button_message')->default('voir Plus');
+            $table->foreignIdFor(Home::class);
+            $table->string('button_message')->nullable()->default('voir Plus');
             $table->string('button_link');
-            $table->string('primary');
-            $table->string('secondary');
-            $table->string('info');
+            $table->string('primary')->nullable();
+            $table->string('secondary')->nullable();
+            $table->string('info')->nullable();
             $table->enum('position',['center','N','S','E','W','NE','NW','SE','SW']);
             $table->integer('order')->nullable();
             $table->boolean('active')->default(true);

@@ -33,6 +33,7 @@ class Order extends Model
     protected $casts = [
         'attribute_data' => 'array',
         'placed_at' => 'datetime',
+        'date_commande'=>'date'
     ];
 
     /**
@@ -47,7 +48,7 @@ class Order extends Model
      */
     public function orderables()
     {
-        return $this->hasMany(Ord::class);
+        return $this->hasMany(Orderable::class,);
     }
 
 
@@ -78,7 +79,7 @@ class Order extends Model
      */
     public function products(): MorphToMany
     {
-        return $this->morphedByMany(ProductVariant::class, 'orderable');
+        return $this->morphedByMany(Product::class, 'orderable');
     }
 
     /**

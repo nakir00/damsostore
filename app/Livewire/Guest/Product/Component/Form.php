@@ -2,17 +2,26 @@
 
 namespace App\Livewire\Guest\Product\Component;
 
+use App\Models\Discount;
+use App\Models\Kit;
+use App\Models\Product;
+use Filament\Notifications\Notification;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 
 class Form extends Component
 {
-
     public $form,$objet;
     public $quantity=1;
     public $selectedSize;
     public $price;
+    public ?Discount $discount=null;
+    public int $breakPrice=0;
+    public int $reduce=0;
+    #[Rule('required|regex:/^[a-zA-Z0-9_.-]*$/')]
+    public string $coupon="";
+
     #[Rule('required|notIn:*')]
     public $products=[];
 
@@ -27,9 +36,49 @@ class Form extends Component
         //if($this->errors()) {dump($this->errors());};
     }
 
+    public function updateDiscount()
+    {
+        $this->validate( [
+            'coupon'=>['required','regex:/^[a-zA-Z0-9_.-]*$/']
+        ],
+        [
+            'coupon.required'=>'Veuillez saisir un coupon',
+            'coupon.regex'=>'Le format du coupon saisi est invalide',
+        ]);
+        $toSearch=strtolower($this->coupon);
+
+        if([]!==$this->form['variants'])
+        {
+            $coupons=Product::with('coupons')->where('slug',$this->form['slug'])->get()->first()->coupons()->get();
+
+        }else{
+            $coupons=Kit::with('coupons')->where('slug',$this->form['slug'])->get()->first()->coupons()->get();
+        }
+        $coupons->each(
+            function($discount) use ($toSearch)
+            {
+                if($discount->coupon===$toSearch)
+                {
+                    $this->discount=$discount;
+                    $discount->uses++;
+                    $discount->save();
+                    Notification::make()
+                        ->title('Coupon appliqué avec succés')
+                        ->success()
+                        ->body('les prix sont maintenant réduits')
+                        ->send();
+                }
+            });
+    }
+
     public function mount()
     {
+        if($this->form['discount']!==null)
+        {
+            $this->discount=Discount::find($this->form['discount']['id']);
+        }
         $this->price=$this->form['price'];
+
     }
 
     #[On('selected')]
@@ -47,6 +96,18 @@ class Form extends Component
     #[on('added')]
     public function addToCart($added=null)
     {
+        if($this->discount!==null)
+        {
+            if($this->discount->data['type']==='percentage')
+            {
+                $reduces=($this->price*$this->discount->data['percentage'])/100;
+            }
+            else {
+                $reduces=$this->discount->data['fixed_values'];
+            }
+            $this->reduce=$reduces;
+            $this->breakPrice=$this->price-$this->reduce;
+        }
 
         if(!empty($this->form['products']))
         {
@@ -75,16 +136,26 @@ class Form extends Component
                     $mot=$mot.'-'.$terme;
                 }
                 $this->form['quantity']=$this->quantity;
-                $toSend=["name" =>$this->form['name'],"slug" =>$this->form['slug'],"price" =>$this->form['price'],"url" =>$this->form['url'],'products'=>$this->form['products'],'options'=>['name'=>'kit'],'option'=>$mot,'quantity'=>$this->quantity,'kit'=>'k'];
+                $toSend=["name" =>$this->form['name'],"slug" =>$this->form['slug'],"price" =>$this->form['price'],"url" =>$this->form['url'],'products'=>$this->form['products'],'options'=>['name'=>'kit'],'option'=>$mot,'quantity'=>$this->quantity,'breakPrice'=>$this->breakPrice,'reduce'=>$this->reduce,'type'=>$this->discount?->data['type']??null,'number'=>$this->discount?->data['type']==='percentage'?($this->discount?->data['percentage']??$this->discount?->data['fixed_values']):null,'handle'=>$this->discount?->handle??null,'kit'=>'k'];
                 $this->dispatch('addedProduct',$toSend);
         }elseif(!empty($this->form['variants'])&&array_key_exists('values',$this->form['variants']))
         {
             $this->objet['options']=$this->form['variants'];
             $this->objet['quantity']=$this->quantity;
+            $this->objet['breakPrice']=$this->breakPrice;
+            $this->objet['reduce']=$this->reduce;
+            $this->objet['type']=$this->discount?->data['type']??null;
+            $this->objet['number']=$this->discount?->data['type']==='percentage'?($this->discount?->data['percentage']??$this->discount?->data['fixed_values']):null;
+            $this->objet['handle']=$this->discount?->handle??null;
             $this->dispatch('addedProduct',$this->objet);
         }elseif($added!==null)
         {
             $added['quantity']=$this->quantity;
+            $added['breakPrice']=$this->breakPrice;
+            $added['reduce']=$this->reduce;
+            $added['type']=$this->discount?->data['type']??null;
+            $added['number']=$this->discount?->data['type']==='percentage'?($this->discount?->data['percentage']??$this->discount?->data['fixed_values']):null;
+            $added['handle']=$this->discount?->handle??null;
             $this->dispatch('addedProduct',$added);
         }
     }

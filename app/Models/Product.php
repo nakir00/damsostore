@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Coderflex\Laravisit\Concerns\CanVisit;
+use Coderflex\Laravisit\Concerns\HasVisits;
 use Spatie\Tags\HasTags;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
@@ -28,11 +31,13 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property ?\Illuminate\Support\Carbon $updated_at
  * @property ?\Illuminate\Support\Carbon $deleted_at
  */
-class Product extends Model
+class Product extends Model implements CanVisit
+
 {
     use HasFactory;
     use HasTags;
     use SoftDeletes;
+    use HasVisits;
 
     /**
      * Return a new factory instance for the model.
@@ -152,7 +157,7 @@ class Product extends Model
 
     public function kits():BelongsToMany
     {
-        return $this->belongsToMany(kit::class,'kit_product','product_id','kit_id')->withTimestamps();;
+        return $this->belongsToMany(Kit::class,'kit_product','product_id','kit_id')->withTimestamps();
     }
 
     /**
@@ -171,7 +176,36 @@ class Product extends Model
      */
     public function orders(): MorphToMany
     {
-        return $this->morphToMany(Order::class, 'orderable');
+        return $this->morphToMany(Order::class, 'orderables');
+    }
+
+    public function discounts(): MorphToMany
+    {
+        return $this->morphToMany(Discount::class, 'purchasable')
+        ->whereNull('coupon')
+        ->whereNotNull('starts_at')
+        ->where('starts_at', '<=', now())
+        ->where(function ($query) {
+            $query->whereNull('ends_at')
+                ->orWhere('ends_at', '>', now());
+        })->withTimestamps();
+    }
+
+    public function coupons(): MorphToMany
+    {
+        return $this->morphToMany(Discount::class, 'purchasable')
+        ->whereNotNull('coupon')
+        ->whereNotNull('starts_at')
+        ->where('starts_at', '<=', now())
+        ->where(function ($query) {
+            $query->whereNull('ends_at')
+                ->orWhere('ends_at', '>', now());
+        })->withTimestamps();
+    }
+
+    public function orderable(): MorphMany
+    {
+        return $this->morphMany(Orderable::class, 'orderable');
     }
 
     /**

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @property int $id
@@ -66,6 +66,7 @@ class Discount extends Model
      */
     public function purchasables()
     {
+        
         return $this->hasMany(DiscountPurchasable::class);
     }
 
@@ -84,10 +85,23 @@ class Discount extends Model
         return $this->hasMany(DiscountPurchasable::class)->whereType('reward');
     }
 
-/*     public function getType()
+    public function getType()
     {
         return app($this->type)->with($this);
-    } */
+    }
+
+    /**
+     * Return the collections relationship.
+     *
+     * @return BelongsToMany
+     */
+    public function groups()
+    {
+        return $this->belongsToMany(
+            CollectionGroup::class,
+            "group_discount"
+        )->withTimestamps();
+    }
 
     /**
      * Return the collections relationship.
@@ -102,31 +116,16 @@ class Discount extends Model
         )->withTimestamps();
     }
 
-    /**
-     * Return the customer groups relationship.
-     */
-    /* public function customerGroups(): BelongsToMany
+    public function Kits(): MorphToMany
     {
-
-        return $this->belongsToMany(
-            CustomerGroup::class,
-            "customer_group_discount"
-        )->withPivot([
-            'visible',
-            'enabled',
-            'starts_at',
-            'ends_at',
-        ])->withTimestamps();
-    } */
-
-    public function brands()
-    {
-
-        return $this->belongsToMany(
-            Brand::class,
-            "brand_discount"
-        )->withTimestamps();
+        return $this->morphedByMany(kit::class, 'purchasable');
     }
+
+    public function products(): MorphToMany
+    {
+        return $this->morphedByMany(Product::class, 'purchasable');
+    }
+
 
     /**
      * Return the active scope.

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
@@ -57,6 +58,11 @@ class Orderable extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function orderable(): MorphTo
+    {
+        return $this->morphTo();
     }
 
 

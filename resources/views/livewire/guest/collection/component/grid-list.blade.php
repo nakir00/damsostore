@@ -16,9 +16,9 @@
                 </span>
 
                 <x-filament::modal  width="4xl">
-                    <x-slot name="trigger">
+                    {{-- <x-slot name="trigger">
                         filtrer
-                    </x-slot>
+                    </x-slot> --}}
                     <x-slot name="header">
                         filtrer
                     </x-slot>
@@ -38,10 +38,10 @@
 
 
     <div>
-        <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+        <div class="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4 xl:gap-x-8">
             @foreach ($products as $product)
 
-                <x-product-view :name="$product['name']" :img="$product['url']" :alt="$product['alt']" :slug="$product['slug']" :price="$product['price']" />
+                <x-product-view :name="$product['name']" :img="$product['url']" :alt="$product['alt']" :slug="$product['slug']" :price="$product['price']" :remise="$product['remise']" :type="$product['type']"/>
 
             @endforeach
             <!-- More products... -->

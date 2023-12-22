@@ -21,6 +21,6 @@ class ProductSlider extends Model
 
     public function home(): BelongsTo
     {
-        return $this->belongsTo(home::class);
+        return $this->belongsTo(Home::class);
     }
 }

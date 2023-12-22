@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\home;
+use App\Models\Home;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('product_sliders', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(home::class);
+            $table->foreignIdFor(Home::class);
             $table->string('name');
             $table->morphs('collectionable');
             $table->integer('order')->nullable();

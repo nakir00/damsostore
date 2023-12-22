@@ -9,7 +9,7 @@ class CreateOrderLinesTable extends Migration
 {
     public function up()
     {
-        Schema::create('orderable', function (Blueprint $table) {
+        Schema::create('orderables', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignIdFor(Order::class);
             $table->morphs('orderable');
@@ -18,8 +18,8 @@ class CreateOrderLinesTable extends Migration
             $table->unsignedBigInteger('unit_price')->index();
             //$table->smallInteger('unit_quantity')->default(1)->unsigned()->index();
             $table->unsignedInteger('quantity');
-            //$table->unsignedBigInteger('sub_total')->index();
-            //$table->unsignedBigInteger('discount_total')->unsigned()->index();
+            $table->unsignedBigInteger('sub_total')->index();
+            $table->unsignedBigInteger('discount_total')->unsigned()->index();
             //$table->json('tax_breakdown');
             //$table->integer('tax_total')->unsigned()->index();
             $table->unsignedBigInteger('total')->index();
@@ -31,6 +31,6 @@ class CreateOrderLinesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('orderable');
+        Schema::dropIfExists('orderables');
     }
 }

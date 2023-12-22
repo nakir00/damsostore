@@ -17,12 +17,13 @@ class CreateCollectionsTable extends Migration
     {
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Media::class,'featured_image_id');
+            $table->foreignIdFor(Media::class,'featured_image_id')->nullable();
             $table->foreignId('collection_group_id')->constrained('collection_groups');
             $table->string('name');
             $table->string('slug')->unique();
             $table->integer('parent_id')->nullable();
             $table->boolean('active')->default(true);
+            $table->boolean('onNavBar')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

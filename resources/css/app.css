@@ -2,5 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '../../node_modules/cropperjs/dist/cropper.css';
-@import '../../vendor/awcodes/filament-curator/resources/css/plugin.css';
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+  .unselectable {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+  progress {
+    border-radius: 11px;
+}
+  progress::-webkit-progress-bar {
+    background-color: #6B7280;
+    border-radius: 11px;
+  }
+  progress::-webkit-progress-value {
+    background-color: black;
+    border-radius: 11px;
+  }
+  progress::-moz-progress-bar {
+    /* style rules */
+  }
+
+
+}

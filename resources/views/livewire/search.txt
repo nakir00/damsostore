@@ -1,0 +1,126 @@
+<?php
+
+use App\Models\kit;
+use App\Models\Product;
+use Livewire\Volt\Component;
+
+new class extends Component {
+    //
+    public array $prod;
+
+    public string $search="";
+
+    public function mount()
+    {
+        $kits=kit::query()->latest()->with(['featuredImage','discounts'])->where('status','Publie')->get()->toArray();
+        $products=Product::latest()->with(['images','discounts'])->where("status","Publie")->get()->toArray();
+        $liste=array_merge($kits,$products);
+        //si collection n'est pas nulle
+        $this->prod=[];
+        foreach ($liste as $collection) {
+            $coupon=null;
+            if([]!==$collection['discounts'])
+            {
+                foreach ($collection['discounts'] as  $value) {
+                    if($coupon===null||$value['priority']>$coupon['priotrity']||$value['priority']>$coupon['priotrity']&&(($value['data']['type']==='percentage'&&$value['data']['percentage']>$coupon['data']['percentage'])||($value['data']['type']==='fixed_values'&&$value['data']['fixed_values']>$coupon['data']['fixed_values'])))
+                    {
+                        $coupon=$value;
+                    }
+                }
+            }
+            $image=$collection['images'][0]??$collection['featured_image'];
+            $this->prod[]=[
+                "slug"=>array_key_exists('images',$collection)?$collection['slug']:$collection['slug'].'?k',
+                "name"=>$collection['name'],
+                "price"=>$collection['old_price']??$collection['price'],
+                'alt'=>$image['alt']??"",
+                'url'=> config('app.url').$image['large_url']??"",
+                'remise'=>$coupon===null?null:($coupon['data']['type']==='percentage'?$coupon['data']['percentage']:$coupon['data']['fixed_values']),
+                'type'=> $coupon===null?null:$coupon['data']['type']
+            ];
+        }
+    }
+
+}; ?>
+
+<div x-data="{
+    visible: false,
+}"
+x-init="console.log(visible)">
+
+    <button class="group -m-2 flex items-center p-2 "
+        x-on:click="visible = !visible ">
+
+        <span class="sr-only">Search</span>
+
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+
+    </button>
+
+    <div class="bg-white absolute inset-x-0 top-16 z-30"
+        x-show="visible"
+        x-on:click.away="visible = false;"
+        x-transition
+            >
+
+            <div class="border-b max-w-7xl px-8 border-gray-200">
+              <div class="flex h-16 items-center">
+
+                <!-- Flyout menus -->
+                <div class="hidden lg:ml-8 lg:block lg:self-stretch">
+                  <div class="flex h-full space-x-8">
+                    <div class="flex ">
+                      <div >
+                        <!-- Item active: "border-indigo-600 text-indigo-600", Item inactive: "border-transparent text-gray-700 hover:text-gray-800" -->
+                        {{-- <input
+                        x-ref="searchField"
+                        x-model="search"
+                        x-on:keydown.window.prevent.slash="$refs.searchField.focus()"
+                        placeholder="Search for an employee..."
+                        type="search"
+                      /> --}}
+                      <x-filament::input
+                        type="search"
+                        wire:model.live="search"
+                        placeholder="rechercher un produit"
+                        />
+                      </div>
+
+                      <div class="absolute inset-x-0 top-full text-sm text-gray-500 ">
+                        <!-- Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow -->
+
+
+                        {{-- <div class="flex max-h-64">
+                            <div class="flex-auto overflow-y-auto">
+                                <div class="flex flex-col space-y-4">
+                                    @foreach($form['products'] as $key=> $product)
+                                        <x-mini-product-view :$product :key="$key" />
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div> --}}
+
+                         <div class="flex max-w-full  bg-white">
+                            <div class=" overflow-x-auto">
+                               <div class="flex flex-row  overflow-x-auto ">
+
+                                    <x-product-view :img="'https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg'" class=" ml-3 w-auto" :slug="'nono'" name="no" :oldprice="12000" :price="12000"></x-product-view>
+                                 
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    </div>
+
+
+</div>
+
+{{--  --}}

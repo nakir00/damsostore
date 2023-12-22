@@ -14,8 +14,8 @@
         <span>ou</span>
     </div>
     <div class="grid grid-cols-1 mt-2 gap-4">
-        <a class="border-black border p-2  flex flex-row justify-evenly rounded-md" href="{{route('auth.socialite.redirect',['provider'=>$providers[0]])}}" role="button" style="text-transform:none">
-            <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+        <a class="border-black border p-2  flex flex-row justify-evenly rounded-md" href="{{route('auth.socialite.redirect',['provider'=> 'google'])}}" role="button" style="text-transform:none">
+            <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="{{asset('assets/google.svg')}}" />
                 Se connecter avec Google
           </a>
         {{-- <a class="border-black border p-2  flex flex-row justify-evenly rounded-md" href="" role="button" style="text-transform:none">

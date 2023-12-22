@@ -1,16 +1,64 @@
 @php
-    //dd($form)
+    if($discount!==null)
+    {
+        if($discount->data['type']==='percentage')
+        {
+            $reduces=($price*$discount->data['percentage'])/100;
+        }
+        else {
+            $reduce=$discount->data['fixed_values'];
+        }
+        $reduce=$reduces;
+        $newPrice=$price-$reduce;
+        $breakPrice=$newPrice;
+    }
+    $oldPrice=$price;
 @endphp
 <div class="mt-4 h-full lg:row-span-3 flex   flex-col lg:mt-0 ml-3">
     <div>
         <h2 class="sr-only">Product information</h2>
-    <div class="my-4">
-        <x-breadcrumb :breadcrumbs="$form['breadcrumb']" />
-    </div>
-    <div class="lg:col-span-2  lg:border-gray-200 lg:pr-8">
-        <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{$form['name']}}</h1>
-    </div>
-    <p class="text-3xl tracking-tight mt-6 flex flex-row mb-12 text-gray-900"><span class="text-xl tracking-tight text-gray-300 mr-2">Prix :   </span> {{number_format($price, 0, ',', ' ')}} Franc cfa </p>
+
+        <div class="my-4">
+            <x-breadcrumb :breadcrumbs="$form['breadcrumb']" />
+        </div>
+
+        <div class="lg:grid lg:grid-cols-2 items-center lg:col-span-1  lg:border-gray-200 ">
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{$form['name']}}</h1>
+            <form wire:submit.prevent='updateDiscount'>
+                <div class="grid grid-cols-5 gap-4" >
+                    <x-input.group class="col-span-3"
+                                   label="Coupon"
+                                   :errors="$errors->get('coupon')"
+                                   required>
+                    <x-input.text class="md:h-8 lg:h-12 md:font-medium lg:font-bold uppercase" wire:model.defer='coupon' />
+
+                </x-input.group>
+                <div class="flex col-span-2 flex-col justify-end">
+                    <button type="submit"
+                            class="flex w-full md:h-8 lg:h-12 items-center justify-center rounded-md border border-transparent bg-black lg:px-8 py-1 md:text-sm lg:text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                            >
+                        Appliquer
+                </button>
+                </div>
+
+                </div>
+            </form>
+
+        </div>
+
+            @if ($discount!==null)
+            <p class="text-xl tracking-tight mt-6 flex flex-row mb-12 text-gray-900">
+                <span class="md:text-base lg:text-xl tracking-tight text-gray-300 mr-2">Prix :   </span>
+                <span class="md:text-base lg:text-xl tracking-tight mb-12 line-through text-gray-400 mr-2">{{number_format($oldPrice, 0, ',', ' ')}} Franc cfa</span>
+                <span class="md:text-base lg:text-xl tracking-tight font-bold mb-12 text-black mr-2">{{number_format($newPrice, 0, ',', ' ')}} Franc cfa</span>
+
+            </p>
+            @else
+            <p class="md:text-xl lg:text-3xl tracking-tight mt-6 flex flex-row mb-12 text-gray-900"><span class="text-xl tracking-tight text-gray-300 mr-2">Prix :   </span> {{number_format($oldPrice, 0, ',', ' ')}} Franc cfa </p>
+            @endif
+
+
+
 
     </div>
     <!-- Reviews -->
@@ -80,7 +128,7 @@
             </fieldset>
         </div> -->
 
-        <div class="flex flex-col h-80 justify-around">
+        <div class="flex flex-col md:h-40 lg:h-80 justify-around">
                 <!-- Sizes -->
             <div>
                 @if (!empty($form['variants'])&&array_key_exists('values',$form['variants']))
@@ -169,7 +217,6 @@
                 @else
                     <button type="submit"
                             class=" flex w-full items-center justify-center rounded-md border border-transparent bg-black px-8 py-3 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
-                            :disabled="$wire->invalid('products.*')"
                             wire:click="$dispatch('added', { added: {{json_encode($form['variants'])}} })">
                         Ajouter au panier
                     </button>

@@ -146,7 +146,7 @@ class KitResource extends Resource
         return [
             //
             RelationManagers\ProductsRelationManager::class,
-            
+
         ];
     }
 
@@ -155,7 +155,6 @@ class KitResource extends Resource
         return [
             'index' => Pages\ListKits::route('/'),
             'create' => Pages\CreateKit::route('/create'),
-            'view' => Pages\ViewKit::route('/{record}'),
             'edit' => Pages\EditKit::route('/{record}/edit'),
         ];
     }

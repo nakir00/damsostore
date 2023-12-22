@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Coderflex\Laravisit\Concerns\CanVisit;
+use Coderflex\Laravisit\Concerns\HasVisits;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Awcodes\Curator\Models\Media;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Spatie\Tags\HasTags;
 
@@ -23,10 +26,11 @@ use Lunar\Database\Factories\CollectionGroupFactory */;
  * @property ?\Illuminate\Support\Carbon $updated_at
  * @property ?\Illuminate\Support\Carbon $deleted_at
  */
-class CollectionGroup extends Model
+class CollectionGroup extends Model implements CanVisit
 {
     use HasFactory;
     use HasTags;
+    use HasVisits;
 
 
     protected $guarded = [];
@@ -78,6 +82,18 @@ class CollectionGroup extends Model
     public function featuredImage(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'featured_image_id', 'id');
+    }
+
+    public function discounts():BelongsToMany
+    {
+        return $this->belongsToMany(Discount::class,"group_discount")
+        ->where('coupon',null)
+        ->whereNotNull('starts_at')
+        ->where('starts_at', '<=', now())
+        ->where(function ($query) {
+            $query->whereNull('ends_at')
+                ->orWhere('ends_at', '>', now());
+        });
     }
 
 }

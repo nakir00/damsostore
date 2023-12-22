@@ -34,7 +34,6 @@ class TopSlidersRelationManager extends RelationManager
                     ->relationship('featuredImage', 'id')->required(),
                 TextInput::make('button_link')->required()->maxLength(50)->unique()->dehydrateStateUsing(fn (string $state): string =>$state = str_replace([' ',"'","_"], '-', $state)),
                 TextInput::make('button_message')
-                    ->required()
                     ->maxLength(255),
                 Select::make('position')
                     ->options(['center'=> 'Centre',
@@ -46,7 +45,7 @@ class TopSlidersRelationManager extends RelationManager
                     'NW'=>'Nord Ouest',
                     'SE'=>'Sud Est',
                     'SW'=>'Sud Ouest'])->required(),
-                RichEditor::make('info')->required()
+                RichEditor::make('info')
                 ->toolbarButtons([
                     'bold',
                     'bulletList',
@@ -61,7 +60,7 @@ class TopSlidersRelationManager extends RelationManager
                     'undo',
                 ]),
                 ColorPicker::make('primary')->required(),
-                ColorPicker::make('secondary')->required(),
+                ColorPicker::make('secondary'),
             ]);
     }
 
@@ -74,7 +73,6 @@ class TopSlidersRelationManager extends RelationManager
                 ColorColumn::make('primary'),
                 ColorColumn::make('secondary'),
                 ToggleColumn::make('active'),
-                TextInputColumn::make('button_message'),
                 SelectColumn::make('position')
                     ->options(['center'=> 'Centre',
                     'N'=>'Nord',

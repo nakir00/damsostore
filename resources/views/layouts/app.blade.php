@@ -4,7 +4,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ $title ?? 'Page Title' }}</title>
+        {!! SEOMeta::generate() !!}
+        {!! OpenGraph::generate() !!}
+        {!! Twitter::generate() !!}
+        {!! JsonLd::generate() !!}
+{{--         <title>{{ $title ?? 'Page Title' }}</title>
+ --}}        <link rel="icon" href="{{asset('assets/logo.jpg')}}">
+
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -18,12 +24,22 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen">
             @livewire('notifications')
-
             <div >
                 <main>
                     <div class="fixed top-0 z-20 w-screen">
                        <livewire:layout.navigation />
                     </div>
+                    <div x-data="{top:false}" x-on:scroll.window="top=(window.pageYOffset==0)?false:true" >
+                        <div x-show="top"
+                        x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 "
+                        x-transition:enter-end="opacity-100 "
+                        x-transition:leave="transition ease-in duration-300"
+                        x-transition:leave-start="opacity-100 "
+                        x-transition:leave-end="opacity-0 "
+                        class="fixed w-screen z-10 top-0 h-16 bg-white"></div>
+                    </div>
+
                     <div class="bg-white">
                         <main>
                             {{ $slot }}

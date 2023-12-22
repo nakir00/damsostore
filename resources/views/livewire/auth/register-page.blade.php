@@ -6,7 +6,7 @@
               <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">inscription</h2>
             </div>
 
-            <div class="mt-4 w-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <div class="mt-4 sm:mx-auto sm:w-full">
                <livewire:auth.registerForm />
 
                <div class="grid grid-cols-1 mt-2 gap-4">

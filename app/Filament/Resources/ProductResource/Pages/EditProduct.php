@@ -19,7 +19,8 @@ class EditProduct extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+            ->hidden($this->record->status==="Publie"),
             Action::make('publier')
             ->disabled($this->record->collection_id===null)
             ->hidden($this->record->status==="Publie")

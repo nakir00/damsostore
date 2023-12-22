@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\kit;
+use App\Models\Kit;
 use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('kit_product', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Product::class);
-            $table->foreignIdFor(kit::class);
+            $table->foreignIdFor(Kit::class);
             $table->timestamps();
         });
     }

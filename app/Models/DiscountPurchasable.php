@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Lunar\Base\BaseModel;
-use Lunar\Database\Factories\DiscountPurchasableFactory;
+use Illuminate\Database\Eloquent\Model;
 use Lunar\Discounts\Database\Factories\DiscountFactory;
 
 /**
@@ -17,7 +16,7 @@ use Lunar\Discounts\Database\Factories\DiscountFactory;
  * @property ?\Illuminate\Support\Carbon $created_at
  * @property ?\Illuminate\Support\Carbon $updated_at
  */
-class DiscountPurchasable extends BaseModel
+class DiscountPurchasable extends Model
 {
     use HasFactory;
 
@@ -59,7 +58,7 @@ class DiscountPurchasable extends BaseModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function purchasable()
+    public function orderable()
     {
         return $this->morphTo();
     }

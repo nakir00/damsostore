@@ -124,8 +124,8 @@ class LoginForm extends Component implements HasForms
 
     public function render()
     {
-        return view('livewire.auth.login-form')->with([
+        return view('livewire.auth.login-form')/* ->with([
             'providers'=> Provider::values()
-        ]);
+        ]) */;
     }
 }

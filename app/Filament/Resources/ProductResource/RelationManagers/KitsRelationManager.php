@@ -47,7 +47,7 @@ class KitsRelationManager extends RelationManager
 
             ->emptyStateActions([
                 Action::make('creer un Kits')
-                        ->url(fn (): string => route('filament.admin.resources.kits.creer'))
+                        ->url(fn (): string => route('filament.admin.resources.kits.create'))
             ]);
     }
 }

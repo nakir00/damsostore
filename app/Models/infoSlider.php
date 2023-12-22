@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class infoSlider extends Model
+class InfoSlider extends Model
 {
     use HasFactory;
 
@@ -17,7 +17,7 @@ class infoSlider extends Model
 
     public function home(): BelongsTo
     {
-        return $this->belongsTo(home::class);
+        return $this->belongsTo(Home::class);
     }
 
     public function featuredImage(): BelongsTo

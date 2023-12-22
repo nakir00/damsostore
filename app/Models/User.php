@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Coderflex\Laravisit\Concerns\CanVisit;
+use Coderflex\Laravisit\Concerns\HasVisits;
 use App\Notifications\customVerifyEmailNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
@@ -15,9 +17,9 @@ use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser,MustVerifyEmail
+class User extends Authenticatable implements FilamentUser,MustVerifyEmail,CanVisit
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable,HasRoles, HasVisits;
 
     /**
      * The attributes that are mass assignable.

@@ -8,6 +8,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite as FacadesSocialite;
 
@@ -39,7 +40,8 @@ class Socialite extends Controller
                     'email' => $user->email,
                     'social_id'=> $user->id,
                     'social_type'=> $provider->value,
-                    'password' => $provider->value
+                    'password' => $provider->value,
+                    'email_verified_at'=> Date::now()
                 ]);
 
                 Auth::login($newUser);

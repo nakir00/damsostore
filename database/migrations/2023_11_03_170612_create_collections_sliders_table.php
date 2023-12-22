@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Collection;
-use App\Models\home;
+use App\Models\Home;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('collections_sliders', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(home::class);
+            $table->foreignIdFor(Home::class);
             $table->morphs('collectionable');
             $table->string('name');
             $table->integer('order')->nullable();

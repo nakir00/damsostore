@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class home extends Model
+class Home extends Model
 {
     use HasFactory;
 
@@ -14,17 +14,17 @@ class home extends Model
 
     public function topSliders(): HasMany
     {
-        return $this->hasMany(topSlider::class);
+        return $this->hasMany(TopSlider::class);
     }
 
     public function infoSliders(): HasMany
     {
-        return $this->hasMany(infoSlider::class);
+        return $this->hasMany(InfoSlider::class);
     }
 
     public function collectionSliders(): HasMany
     {
-        return $this->hasMany(collectionsSlider::class);
+        return $this->hasMany(CollectionsSlider::class);
     }
 
     public function productSliders(): HasMany

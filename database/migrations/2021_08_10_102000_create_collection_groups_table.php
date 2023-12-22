@@ -13,7 +13,7 @@ class CreateCollectionGroupsTable extends Migration
     {
         Schema::create('collection_groups', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->foreignIdFor(Media::class,'featured_image_id');
+            $table->foreignIdFor(Media::class,'featured_image_id')->nullable();
             $table->string('name');
             $table->string('slug')->unique();
             $table->json('attribute_data')->nullable();

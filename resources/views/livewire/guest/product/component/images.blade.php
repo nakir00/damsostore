@@ -1,7 +1,7 @@
-<div class="lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
+<div class="md:col-span-2 md:col-start-1 md:row-start-1 md:mx-auto md:grid md:w-full md:max-w-7xl md:grid-cols-2 md:gap-x-8 md:px-8">
     <div class="flex flex-col justify-around " x-data x-on:yup.window="console.log(321)">
         @foreach ($images as $image)
-            <div class="aspect-h-3 aspect-w-3 hidden overflow-hidden rounded-lg lg:block lg: mb-2">
+            <div class="aspect-h-3 aspect-w-3 hidden overflow-hidden rounded-lg md:block md: mb-2">
                 <img src="{{$image}}" alt="Model wearing plain black basic tee." class="h-full w-full object-cover object-center">
             </div>
             @endforeach
