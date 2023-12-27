@@ -48,7 +48,7 @@ class ProductPage extends Component
             return$images;
 
         }else{
-        return array_map(fn($images)=>$images['large_url'],$this->product['images']);
+        return array_map(fn($images)=>config('app.url').$images['large_url'],$this->product['images']);
         }
     }
 
@@ -82,7 +82,7 @@ class ProductPage extends Component
                             'old_price'=>$iden['old_price'],
                             'option'=>$iden['variants'][$i]['name'],
                             'price'=>$iden['variants'][$i]['min_price'],
-                            'url'=>$iden['variants'][$i]['attribute_data']['product']['url'],
+                            'url'=>config('app.url').$iden['variants'][$i]['attribute_data']['product']['url'],
                             'alt'=>$iden['variants'][$i]['attribute_data']['product']['alt'],
                         ],
                     ];
@@ -104,7 +104,7 @@ class ProductPage extends Component
                                     'old_price'=>$iden['old_price'],
                                     'option'=>$variant['name'],
                                     'price'=>$variant['min_price'],
-                                    'url'=>$variant['attribute_data']['product']['url'],
+                                    'url'=>config('app.url').$variant['attribute_data']['product']['url'],
                                     'alt'=>$variant['attribute_data']['product']['alt'],
                                 ],
                             ];
@@ -122,7 +122,7 @@ class ProductPage extends Component
             }
             return$toReturn;
         }
-        return ['name'=>$iden['name'],'slug'=>$iden['slug'],'old_price'=>$iden['old_price'],'price'=>$iden['old_price'],'option'=>"sans option",'url'=>$iden['images'][0]['large_url'],'alt'=>$iden['images'][0]['alt']??""];
+        return ['name'=>$iden['name'],'slug'=>$iden['slug'],'old_price'=>$iden['old_price'],'price'=>$iden['old_price'],'option'=>"sans option",'url'=>config('app.url').$iden['images'][0]['large_url'],'alt'=>$iden['images'][0]['alt']??""];
     }
 
     public function getBreadcrumbs($id)
@@ -143,7 +143,7 @@ class ProductPage extends Component
                 'name'=>$product['name'],
                 'slug'=>$product['slug'],
                 'old_price'=>$product['old_price'],
-                'url'=>$product['images'][0]['large_url'],
+                'url'=>config('app.url').$product['images'][0]['large_url'],
                 'options'=>!empty($product['variants'])?[
                     'name'=>$product['product_option']['name'],
                     'values'=>array_map(fn($variant)=>['name'=>$variant['name'],'price'=>$variant['min_price']],$product['variants'])
@@ -166,7 +166,7 @@ class ProductPage extends Component
                 'variants'=>[],
                 'discount'=>$this->getDiscount(),
                 'products'=>$this->getProducts($this->product['products']),
-                'url'=>$this->product['featured_image']['large_url']
+                'url'=>config('app.url').$this->product['featured_image']['large_url']
             ];
         }else{
             $datas=[

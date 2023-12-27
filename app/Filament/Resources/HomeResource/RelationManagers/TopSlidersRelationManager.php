@@ -32,6 +32,8 @@ class TopSlidersRelationManager extends RelationManager
             ->schema([
                 CuratorPicker::make('featured_image_id')
                     ->relationship('featuredImage', 'id')->required(),
+                CuratorPicker::make('mobile_media_id')
+                    ->relationship('mobileImage', 'id')->required(),
                 TextInput::make('button_link')->required()->maxLength(50)->unique()->dehydrateStateUsing(fn (string $state): string =>$state = str_replace([' ',"'","_"], '-', $state)),
                 TextInput::make('button_message')
                     ->maxLength(255),
@@ -70,6 +72,7 @@ class TopSlidersRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 CuratorColumn::make('featured_image_id')->size(50)->rounded(),
+                CuratorColumn::make('mobile_media_id')->size(50)->rounded(),
                 ColorColumn::make('primary'),
                 ColorColumn::make('secondary'),
                 ToggleColumn::make('active'),

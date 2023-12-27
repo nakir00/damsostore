@@ -138,7 +138,7 @@ class CollectionPage extends Component
                     }
                 }
             }
-            $toSend[]=['name'=>$collection->name,'slug'=>$collection->slug,'url'=>$collection->featuredImage()->get()->first()?->toArray()['large_url']??"",'alt'=>$collection->featuredImage()->get()->first()?->toArray()['alt']??"",'remise'=>$coupon===null?null:($coupon->data['type']==='percentage'?$coupon->data['percentage']:$coupon->data['fixed_values']),'type'=> $coupon===null?null:$coupon->data['type']];
+            $toSend[]=['name'=>$collection->name,'slug'=>$collection->slug,'url'=>config('app.url').$collection->featuredImage()->get()->first()?->toArray()['large_url']??"",'alt'=>$collection->featuredImage()->get()->first()?->toArray()['alt']??"",'remise'=>$coupon===null?null:($coupon->data['type']==='percentage'?$coupon->data['percentage']:$coupon->data['fixed_values']),'type'=> $coupon===null?null:$coupon->data['type']];
         }
         return $toSend;
     }
@@ -192,7 +192,7 @@ class CollectionPage extends Component
                 "name"=>$collection['name'],
                 "price"=>$collection['old_price']??$collection['price'],
                 'alt'=>$image['alt']??"",
-                'url'=> $image['large_url']??"",
+                'url'=> config('app.url').$image['large_url']??"",
                 'remise'=>$coupon===null?null:($coupon['data']['type']==='percentage'?$coupon['data']['percentage']:$coupon['data']['fixed_values']),
                 'type'=> $coupon===null?null:$coupon['data']['type']
                 ];

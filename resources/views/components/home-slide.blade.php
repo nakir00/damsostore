@@ -22,7 +22,9 @@
  <div {{ $attributes->merge(['class' => 'swiper-slide h-auto relative' ]) }}>
 
     @if ($slide['button_message']===null)<a href="{{$slide['button_link']}}">@endif
-    <img class=" w-full h-full object-cover block" src="{{$slide['url']}}" alt="">
+    <img class="hidden fixed z-[3] w-full h-full object-cover sm:block" src="{{$slide['url']}}" alt="">
+    <img class="sm:hidden fixed z-[5] w-full h-full object-cover block" src="{{$slide['mobile']}}" alt="">
+
     @if($slide['button_message']!==null)
 
 

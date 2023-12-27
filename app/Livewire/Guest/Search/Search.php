@@ -61,7 +61,7 @@ class Search extends Component
                 "name"=>$collection['name'],
                 "price"=>$collection['old_price']??$collection['price'],
                 'alt'=>$collection['featured_image']['alt']??"",
-                'url'=>$collection['featured_image']['large_url']??"",
+                'url'=>config('app.url').$collection['featured_image']['large_url']??"",
                 'remise'=>$coupon===null?null:($coupon['data']['type']==='percentage'?$coupon['data']['percentage']:$coupon['data']['fixed_values']),
                 'type'=> $coupon===null?null:$coupon['data']['type']
                 ];

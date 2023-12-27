@@ -111,7 +111,7 @@ class LoginForm extends Component implements HasForms
             $this->redirect(
                 route('filament.admin.pages.dashboard'),
                 //session('url.intended', RouteServiceProvider::HOME),
-                navigate: true
+                
             );
         }elseif(auth()->user()->role==='client'){
             $this->redirect(

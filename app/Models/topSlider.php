@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
+ * @property int $mobile_image_id
  * @property int $featured_image_id
  * @property int $home_id
  * @property string $button_message
@@ -37,5 +38,10 @@ class TopSlider extends Model
     public function featuredImage(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'featured_image_id', 'id');
+    }
+
+    public function MobileImage(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'mobile_media_id', 'id');
     }
 }

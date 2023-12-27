@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Termwind\Components\Dd;
 
 #[Layout('layouts.app')]
 class WelcomePage extends Component
@@ -18,8 +19,8 @@ class WelcomePage extends Component
 
     public function getSlides()
     {
-        $slides = Home::where('active',true)->first()->topSliders()->where('active', true)->with('featuredImage')->get();
-        return array_map(fn( $topSlider)=>['button_message'=>$topSlider['button_message'],'button_link'=>$topSlider['button_link'],'primary'=>$topSlider['primary'],'secondary'=>$topSlider['secondary'],'position'=>$topSlider['position'],'url'=>$topSlider['featured_image']['large_url'],'alt'=>$topSlider['featured_image']['alt'],'info'=>$topSlider['info']],$slides->toArray());
+        $slides = Home::query()->where('active',true)->first()->topSliders()->where('active', true)->with(['featuredImage','mobileImage'])->get();
+        return array_map(fn( $topSlider)=>['button_message'=>$topSlider['button_message'],'button_link'=>$topSlider['button_link'],'primary'=>$topSlider['primary'],'secondary'=>$topSlider['secondary'],'position'=>$topSlider['position'],'url'=>$topSlider['featured_image']['url'],'mobile'=>$topSlider['mobile_image']['url'],'alt'=>$topSlider['featured_image']['alt'],'info'=>$topSlider['info']],$slides->toArray());
     }
 
     public function getCollectionsSlider()
@@ -40,7 +41,7 @@ class WelcomePage extends Component
                     }
                 }
             }
-            $toSend[]=['name'=>$assocNameId[$collection->id],'slug'=>$collection->slug,'url'=>$collection->featuredImage()->get()->first()->toArray()['large_url']??"",'alt'=>$collection->featuredImage()->get()->first()->toArray()['alt']??"",'remise'=>$coupon===null?null:($coupon->data['type']==='percentage'?$coupon->data['percentage']:$coupon->data['fixed_values']),'type'=> $coupon===null?null:$coupon->data['type']];
+            $toSend[]=['name'=>$assocNameId[$collection->id],'slug'=>$collection->slug,'url'=>config('app.url').$collection->featuredImage()->get()->first()->toArray()['large_url']??"",'alt'=>$collection->featuredImage()->get()->first()->toArray()['alt']??"",'remise'=>$coupon===null?null:($coupon->data['type']==='percentage'?$coupon->data['percentage']:$coupon->data['fixed_values']),'type'=> $coupon===null?null:$coupon->data['type']];
         }
         return $toSend;
     }
@@ -77,7 +78,7 @@ class WelcomePage extends Component
                 "name"=>$collection->name,
                 "price"=>$collection->old_price,
                 'alt'=>$image['alt']??"",
-                'url'=> $image['large_url'],
+                'url'=> config('app.url').$image['large_url'],
                 'remise'=>$coupon===null?null:($coupon->data['type']==='percentage'?$coupon->data['percentage']:$coupon->data['fixed_values']),
                 'type'=> $coupon===null?null:$coupon->data['type']
                 ];
