@@ -13,6 +13,8 @@ use Livewire\Component;
 class MobileSwiper extends Component
 {
 
+    public $content_name;
+
     public $form,$objet;
     public $quantity=1;
     public $selectedSize;
@@ -81,6 +83,8 @@ class MobileSwiper extends Component
             $this->discount=Discount::find($this->form['discount']['id']);
         }
         $this->price=$this->form['price'];
+
+        $this->content_name=$this->form['variants']!==[]?$this->form['variants']['name']:$this->form['name'];
 
     }
 

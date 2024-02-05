@@ -26,6 +26,14 @@ class CollectionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public function mount(): void
+    {
+        abort_unless(auth()->user()->role==='admin', 403);
+        if(auth()->user()->role!=='admin')
+        {
+            redirect(route('filament.admin.pages.dashboard'));
+        }
+    }
 
     public static function form(Form $form): Form
     {
@@ -85,6 +93,11 @@ class CollectionResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->role==='admin';
     }
 
     public static function getPages(): array

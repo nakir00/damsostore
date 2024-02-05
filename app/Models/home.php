@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Home extends Model
 {
@@ -32,4 +33,13 @@ class Home extends Model
         return $this->hasMany(ProductSlider::class);
     }
 
+    /**
+     * returns the seo data
+     *
+     * @return Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function seoData(): MorphOne
+    {
+        return $this->morphOne(SeoInfo::class, 'seoable');
+    }
 }

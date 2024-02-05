@@ -35,13 +35,44 @@
             @endif --}}
 
             @if ($paymentType == 'cash-in-hand')
-                <form wire:submit.prevent="checkout">
+                <div {{-- wire:submit.prevent="checkout" --}}>
                     <div class="p-4 text-sm text-center text-black rounded-lg bg-white">
                         Après avoir recu le coli
                     </div>
 
-                    <button class="px-5 py-3 mt-4 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-600"
-                            type="submit"
+                    <button
+                        x-on:click="
+                        cart={{json_encode($cart)}};
+                        content = cart.map(produit => ({
+                            id: produit.slug, // Utilisez une propriété unique comme identifiant du produit (slug, référence, etc.)
+                            quantity: produit.quantity,
+                            item_price: produit.price,
+                            description: produit.name, // Vous pouvez utiliser d'autres propriétés pour enrichir la description
+                            brand: 'Votre Marque',
+                            category: 'Produit',
+                            image_url: produit.url,
+                            attributes: {
+                                taille: produit.option,
+
+                            }
+                        }));
+                        ids=cart.map(produit => produit.slug);
+                        console.log();
+                        fbq('track', 'Purchase', {
+                            currency: 'EUR',
+                            content_name: 'Commande Finalisée - {{$sessionId}}',
+                            content_category: 'commande',
+                            content_ids: ids,
+                            content_type: 'product_group',
+                            contents: content,
+                            value: {{$sommeWithBreak}},
+                            num_items: cart.length,
+                            order_id: 'Commande_'+ Date.now(),
+
+                        });
+                        "
+                    class="px-5 py-3 mt-4 text-sm font-medium text-white bg-black rounded-lg hover:bg-gray-600"
+                            {{-- type="submit" --}}
                             wire:key="payment_submit_btn">
                         <span wire:loading.remove.delay
                               wire:target="checkout">
@@ -58,7 +89,8 @@
                                         cy="12"
                                         r="10"
                                         stroke="currentColor"
-                                        stroke-width="4"></circle>
+                                        stroke-width="4">
+                                </circle>
                                 <path class="opacity-75"
                                       fill="currentColor"
                                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
@@ -66,7 +98,7 @@
                             </svg>
                         </span>
                     </button>
-                </form>
+                </div>
             @endif
         </div>
     @endif

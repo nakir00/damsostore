@@ -21,7 +21,7 @@ class KitsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->query(kit::query()->whereHas('products',function ($query) {$query->where('product_id', $this->ownerRecord->id);}))
+            ->query(Kit::query()->whereHas('products',function ($query) {$query->where('product_id', $this->ownerRecord->id);}))
             ->recordTitleAttribute('name')
             ->columns([
                 CuratorColumn::make('featured_image_id')

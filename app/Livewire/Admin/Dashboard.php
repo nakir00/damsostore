@@ -20,7 +20,7 @@ class Dashboard extends Component
                 $this->redirect(
                     route('filament.admin.pages.dashboard'),
                     //session('url.intended', RouteServiceProvider::HOME),
-                    navigate: true
+
                 );
             }elseif(auth()->user()->role==='client'){
                 $this->redirect(

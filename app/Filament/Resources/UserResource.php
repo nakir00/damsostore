@@ -2,51 +2,52 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductTypeResource\Pages;
-use App\Filament\Resources\ProductTypeResource\RelationManagers;
-use App\Models\ProductType;
-use Awcodes\Curator\Components\Forms\CuratorPicker;
-use Awcodes\Curator\Components\Tables\CuratorColumn;
+use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProductTypeResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $model = ProductType::class;
+    protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public function mount(): void
     {
-        return $form
-            ->schema([
-                //
-                TextInput::make('name')->required()->maxLength(50),
-            ]);
+        abort_unless(auth()->user()->role==='admin', 403);
+        if(auth()->user()->role!=='admin')
+        {
+            redirect(route('filament.admin.pages.dashboard'));
+        }
     }
 
     public static function table(Table $table): Table
     {
         return $table
+        ->query(User::query()->whereIn('role',['assistant','admin']))
+
             ->columns([
-                //
-                TextColumn::make('name')->label("nom")->searchable(),
+                TextColumn::make('name')->label('nom'),
+                TextColumn::make('email')->label('email'),
+                TextColumn::make('role')->label('role'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                //Action::make('changer le role')
+
             ])
             ->bulkActions([
                 /* Tables\Actions\BulkActionGroup::make([
@@ -56,6 +57,11 @@ class ProductTypeResource extends Resource
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ]);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->role==='admin';
     }
 
     public static function getRelations(): array
@@ -68,9 +74,7 @@ class ProductTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProductTypes::route('/'),
-            'create' => Pages\CreateProductType::route('/create'),
-            'edit' => Pages\EditProductType::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
         ];
     }
 }

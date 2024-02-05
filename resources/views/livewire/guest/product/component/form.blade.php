@@ -198,6 +198,15 @@
                 </div>
                 @if (!empty($form['variants'])&& array_key_exists('values',$form['variants']))
                     <button type="submit"
+                            x-on:click="fbq('track', 'AddToCart', {
+                                content_name: @entangle('content_name'),
+                                content_category: 'Produit',
+                                content_ids: [@entangle('content_name')],
+                                content_type: 'product',
+                                currency: 'FCFA',
+                                value: @entangle('price'),
+                                num_items: @entangle('quantity'),
+                            });"
                             @if ($objet===null)
                                 disabled
                                 class="flex w-full items-center justify-center rounded-md border border-transparent bg-gray-400 px-8 py-3 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
@@ -210,6 +219,15 @@
 
                 @elseif (!empty($form['products']))
                     <button type="submit"
+                                x-on:click="fbq('track', 'AddToCart', {
+                                    content_name: @entangle('content_name'),
+                                    content_category: 'Produit',
+                                    content_ids: [@entangle('content_name')],
+                                    content_type: 'product',
+                                    currency: 'FCFA',
+                                    value: @entangle('price'),
+                                    num_items: @entangle('quantity'),
+                                });"
                                 class="flex w-full items-center justify-center rounded-md border border-transparent bg-black px-8 py-3 text-base font-medium text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
                             >
                         Ajouter au panier
@@ -217,6 +235,15 @@
                 @else
                     <button type="submit"
                             class=" flex w-full items-center justify-center rounded-md border border-transparent bg-black px-8 py-3 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                            x-on:click="fbq('track', 'AddToCart', {
+                                content_name: @entangle('content_name'),
+                                content_category: 'Produit',
+                                content_ids: [@entangle('content_name')],
+                                content_type: 'product',
+                                currency: 'FCFA',
+                                value: @entangle('price'),
+                                num_items: @entangle('quantity'),
+                            });"
                             wire:click="$dispatch('added', { added: {{json_encode($form['variants'])}} })">
                         Ajouter au panier
                     </button>

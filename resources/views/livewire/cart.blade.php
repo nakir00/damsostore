@@ -76,6 +76,7 @@ use Illuminate\Support\Facades\Session;
                                 <div class="flow-root" >
                                     <ul class="-my-4 overflow-y-auto divide-y divide-gray-100 max-h-96">
                                         @foreach ($cart['lines'] as $index => $line)
+
                                             <li>
                                                 <div class="flex py-4"  wire:key="line_{{ $line['slug'] }}">
 
@@ -119,7 +120,9 @@ use Illuminate\Support\Facades\Session;
                                                         </div>
 
                                                         <div class="flex items-center mt-2">
-                                                            <button class="p-2 mr-1 text-gray-600 transition-colors rounded-lg hover:bg-gray-100 hover:text-gray-700"
+                                                            <button
+                                                                x-on:click="console.log(line)"
+                                                            class="p-2 mr-1 text-gray-600 transition-colors rounded-lg hover:bg-gray-100 hover:text-gray-700"
                                                                     type="button"
                                                                     @if(is_null($line['handle']))
                                                                         wire:click="minus('{{$line['slug'].'.'.$line['option']}}')"

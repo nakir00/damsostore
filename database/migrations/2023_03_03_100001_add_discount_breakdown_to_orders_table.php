@@ -9,7 +9,7 @@ class AddDiscountBreakdownToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->json('discount_breakdown')->nullable()->after('sub_total');
+            $table->unsignedBigInteger('discount_breakdown')->nullable()->after('sub_total');
         });
     }
 

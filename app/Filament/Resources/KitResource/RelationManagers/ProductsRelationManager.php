@@ -58,7 +58,7 @@ class ProductsRelationManager extends RelationManager
                 Tables\Actions\DetachAction::make(),
             ])
             ->headerActions([
-                AttachAction::make()
+                AttachAction::make()->preloadRecordSelect()
                 ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

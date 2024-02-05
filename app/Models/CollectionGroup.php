@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Carbon;
+use Spatie\Sitemap\Contracts\Sitemapable;
+use Spatie\Sitemap\Tags\Url;
 use Spatie\Tags\HasTags;
 
 /* use Lunar\Base\Traits\HasMacros;
@@ -26,7 +29,7 @@ use Lunar\Database\Factories\CollectionGroupFactory */;
  * @property ?\Illuminate\Support\Carbon $updated_at
  * @property ?\Illuminate\Support\Carbon $deleted_at
  */
-class CollectionGroup extends Model implements CanVisit
+class CollectionGroup extends Model implements CanVisit, Sitemapable
 {
     use HasFactory;
     use HasTags;
@@ -53,6 +56,43 @@ class CollectionGroup extends Model implements CanVisit
         return $this->hasMany(Collection::class);
     }
 
+
+    /**
+     * Return the Sitemap tag for the product
+     *
+     * @return Spatie\Sitemap\Tags\Url
+     */
+    public function toSitemapTag(): Url | string | array
+    {
+        $image=$this->featuredImage()->get();
+        // Return with fine-grained control:
+        if($image->isEmpty())
+        {
+            return Url::create(route('collection', ['slug'=>$this->slug,'g']))
+                ->setLastModificationDate(Carbon::create($this->updated_at))
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
+                ->setPriority(0.1);
+        }else {
+            $image=$image->first()->toArray();
+            return Url::create(route('collection', ['slug'=>$this->slug,'g']))
+                ->addImage($image['url'],title:$image['alt']??"")
+                ->setLastModificationDate(Carbon::create($this->updated_at))
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
+                ->setPriority(0.1);
+        }
+
+    }
+
+    /**
+     * returns the seo data
+     *
+     * @return Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function seoData(): MorphOne
+    {
+        return $this->morphOne(SeoInfo::class, 'seoable');
+    }
+
     /**
      * Return the product option relationship.
      *
@@ -68,16 +108,6 @@ class CollectionGroup extends Model implements CanVisit
     {
         return $this->hasMany(kit::class);
     }
-
-    /* public function productSlider(): MorphOne
-    {
-        return $this->morphOne(ProductSlider::class, 'collectionable');
-    } */
-
-   /*  public function collectionSlider(): MorphOne
-    {
-        return $this->morphOne(collectionsSlider::class, 'collectionable');
-    } */
 
     public function featuredImage(): BelongsTo
     {

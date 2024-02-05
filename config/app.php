@@ -163,6 +163,7 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
         SocialiteProviders\Manager\ServiceProvider::class,
         Artesaos\SEOTools\Providers\SEOToolsServiceProvider::class,
+        \Rezkonline\LaravelMetaPixel\Providers\MetaPixelServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -195,6 +196,7 @@ return [
         'Twitter'       => Artesaos\SEOTools\Facades\TwitterCard::class,
         'JsonLd'        => Artesaos\SEOTools\Facades\JsonLd::class,
         'JsonLdMulti'   => Artesaos\SEOTools\Facades\JsonLdMulti::class,
+        'LaravelMetaPixel' => \Rezkonline\LaravelMetaPixel\Facades\MetaPixelFacade::class,
     ])->toArray(),
 
 ];

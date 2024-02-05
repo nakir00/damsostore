@@ -11,7 +11,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Carbon;
+use Spatie\Sitemap\Contracts\Sitemapable;
+use Spatie\Sitemap\Tags\Url;
 
 /**
  * @property int $id
@@ -27,7 +31,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property ?\Illuminate\Support\Carbon $updated_at
  * @property ?\Illuminate\Support\Carbon $deleted_at
  */
-class Kit extends Model implements CanVisit
+class Kit extends Model implements CanVisit, Sitemapable
 {
     use HasFactory;
     use HasTags;
@@ -94,6 +98,43 @@ class Kit extends Model implements CanVisit
     public function orderable(): MorphMany
     {
         return $this->morphMany(Orderable::class, 'orderable');
+    }
+
+    /**
+     * Return the Sitemap tag for the product
+     *
+     * @return Spatie\Sitemap\Tags\Url
+     */
+    public function toSitemapTag(): Url | string | array
+    {
+        $image=$this->featuredImage()->get();
+        if($image->isEmpty())
+        {
+            return Url::create(route('product', ['slug'=>$this->slug,'k']))
+            ->setLastModificationDate(Carbon::create($this->updated_at))
+            ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
+            ->setPriority(0.1);
+        }else {
+            $image=$image->first()->toArray();
+            return Url::create(route('product', ['slug'=>$this->slug,'k']))
+            ->addImage($image['url'],title:$image['alt']??"")
+            ->setLastModificationDate(Carbon::create($this->updated_at))
+            ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
+            ->setPriority(0.1);
+        }
+
+        // Return with fine-grained control:
+
+    }
+
+    /**
+     * returns the seo data
+     *
+     * @return Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function seoData(): MorphOne
+    {
+        return $this->morphOne(SeoInfo::class, 'seoable');
     }
 
 }

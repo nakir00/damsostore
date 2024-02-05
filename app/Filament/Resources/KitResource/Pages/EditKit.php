@@ -28,6 +28,7 @@ class EditKit extends EditRecord
             ->requiresConfirmation()
             ->action(function (){
                 $this->record->status="Publie";
+                $this-> record ->collection_group_id=3;
                 $this->record->save();
                 Notification::make()
                 ->title('publié avec succés')

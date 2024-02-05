@@ -16,10 +16,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Carbon;
+use Spatie\Sitemap\Contracts\Sitemapable;
+use Spatie\Sitemap\Tags\Url;
 
 /**
  * @property int $id
  * @property int $product_type_id
+ * @property int $product_option_id
  * @property ?int $collection_id
  * @property string $name
  * @property string $slug
@@ -31,7 +35,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property ?\Illuminate\Support\Carbon $updated_at
  * @property ?\Illuminate\Support\Carbon $deleted_at
  */
-class Product extends Model implements CanVisit
+class Product extends Model implements CanVisit, Sitemapable
 
 {
     use HasFactory;
@@ -72,15 +76,6 @@ class Product extends Model implements CanVisit
         'attribute_data' => 'array',
     ];
 
-    /**
-     * Returns the attributes to be stored against this model.
-     *
-     * @return array
-     */
-   /*  public function mappedAttributes()
-    {
-        return $this->productType->mappedAttributes;
-    } */
 
     /**
      * Return the product type relation.
@@ -92,15 +87,7 @@ class Product extends Model implements CanVisit
         return $this->belongsTo(ProductType::class);
     }
 
-    /**
-     * Return the product images relation.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
- /*    public function images()
-    {
-        return $this->media()->where('collection_name', 'images');
-    } */
+
 
     /**
      * Return the product variants relation.
@@ -203,9 +190,45 @@ class Product extends Model implements CanVisit
         })->withTimestamps();
     }
 
+
     public function orderable(): MorphMany
     {
         return $this->morphMany(Orderable::class, 'orderable');
+    }
+
+    /**
+     * Generates the products Variants.
+     *
+     * @return void
+     */
+    public function GenerateVariants()
+    {
+        if($this->product_option_id===null)
+        {return printf('erreur aucun product_option_id dans le produit'); }
+        $values=ProductOptionValue::where('product_option_id',$this->product_option_id)->get()->all();
+        $names=array_map(fn($value)=>$value->name,$values);
+        $imageOwner=$this->images()->get()->first()->toArray();
+        $acc=[];
+        foreach ($names as  $name) {
+
+                if(in_array($name,['46','47','35','36','37','38','39']))
+                {
+                    $acc[]=["name"=>$name,"attribute_data"=>["product"=>["name"=>$this->name,"url"=>$imageOwner['large_url'],"alt"=>$imageOwner['alt']]],"min_price"=>$this->old_price,"disponibility"=>false];
+                }else{
+                    $acc[]=["name"=>$name,"attribute_data"=>["product"=>["name"=>$this->name,"url"=>$imageOwner['large_url'],"alt"=>$imageOwner['alt']]],"min_price"=>$this->old_price,"disponibility"=>true];
+                }
+        }
+        $this->variants()->createMany($acc);
+    }
+
+    /**
+     * returns the seo data
+     *
+     * @return Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function seoData(): MorphOne
+    {
+        return $this->morphOne(SeoInfo::class, 'seoable');
     }
 
     /**
@@ -287,6 +310,34 @@ class Product extends Model implements CanVisit
         )->wherePriceableType(ProductVariant::class);
     } */
 
+    /**
+     * Return the Sitemap tag for the product
+     *
+     * @return Spatie\Sitemap\Tags\Url
+     */
+    public function toSitemapTag(): Url | string | array
+    {
+        $image=$this->images()->get();
 
+        if($image->isEmpty())
+        {
+            return Url::create(route('product', ['slug'=>$this->slug]))
+                ->setLastModificationDate(Carbon::create($this->updated_at))
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
+                ->setPriority(0.1);
+        }else {
+            $image=$image->toArray();
+            $url= Url::create(route('product', ['slug'=>$this->slug]))
+                ->setLastModificationDate(Carbon::create($this->updated_at))
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_YEARLY)
+                ->setPriority(0.1);
+           foreach ($image as $pic) {
+                $url->addImage($pic['url'],title:$pic['alt']??"");
+            }
+            return $url;
+        }
+        // Return with fine-grained control:
+
+    }
 
 }

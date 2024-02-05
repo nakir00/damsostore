@@ -48,4 +48,5 @@ new class extends Component {
           </div>
         </div>
     </footer>
+
 </div>

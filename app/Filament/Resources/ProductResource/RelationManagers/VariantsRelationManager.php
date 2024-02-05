@@ -43,8 +43,8 @@ class VariantsRelationManager extends RelationManager
             ->color('gray')
             ->requiresConfirmation()
             ->action(function (){
-                $this->deleteAll();
-                $this->associateVariante();
+                $this->ownerRecord->variants()->delete();
+                $this->ownerRecord->GenerateVariants();
                 Notification::make()
                 ->title('variantes générées avec succés')
                 ->success()
@@ -60,8 +60,8 @@ class VariantsRelationManager extends RelationManager
             ->requiresConfirmation()
             ->modalDescription("cela va (re)initialiser les variantes. vous confirmez ?")
             ->action(function (){
-                $this->deleteAll();
-                $this->associateVariante();
+                $this->ownerRecord->variants()->delete();
+                $this->ownerRecord->GenerateVariants();
                 Notification::make()
                 ->title('variantes générées avec succés')
                 ->success()
@@ -72,11 +72,6 @@ class VariantsRelationManager extends RelationManager
             ]);
     }
 
-    public function deleteAll()
-    {
-        $isEmpty=$this->ownerRecord->variants()->get()->all()===[];
-        if(!$isEmpty){ProductVariant::query()->delete(array_map(fn($variante)=>$variante->id,$this->ownerRecord->variants()->get()->all()));}
-    }
     public function associateVariante()
     {
         $values=ProductOptionValue::where('product_option_id',$this->ownerRecord->product_option_id)->get()->all();
@@ -84,9 +79,14 @@ class VariantsRelationManager extends RelationManager
         $imageOwner=$this->ownerRecord->images()->get()->first()->toArray();
         $acc=[];
         foreach ($names as  $name) {
-            $acc[]=["name"=>$name,"attribute_data"=>["product"=>["name"=>$this->ownerRecord->name,"url"=>$imageOwner['large_url'],"alt"=>$imageOwner['alt']]],"min_price"=>$this->ownerRecord->old_price,"disponibility"=>true];
+
+                if(in_array($name,['46','47','35','36','37','38','39']))
+                {
+                    $acc[]=["name"=>$name,"attribute_data"=>["product"=>["name"=>$this->ownerRecord->name,"url"=>$imageOwner['large_url'],"alt"=>$imageOwner['alt']]],"min_price"=>$this->ownerRecord->old_price,"disponibility"=>false];
+                }else{
+                    $acc[]=["name"=>$name,"attribute_data"=>["product"=>["name"=>$this->ownerRecord->name,"url"=>$imageOwner['large_url'],"alt"=>$imageOwner['alt']]],"min_price"=>$this->ownerRecord->old_price,"disponibility"=>true];
+                }
         }
         $this->ownerRecord->variants()->createMany($acc);
-
     }
 }

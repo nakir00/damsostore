@@ -8,6 +8,10 @@ use App\Models\CollectionGroup;
 use App\Models\Discount;
 use App\Models\Kit;
 use App\Models\Product;
+use Artesaos\SEOTools\Facades\JsonLd;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\SEOMeta;
+use Artesaos\SEOTools\Facades\TwitterCard;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Title;
@@ -235,12 +239,39 @@ class CollectionPage extends Component
         return$coupon;
     }
 
+    public function applySEO() : void
+    {
+
+    }
+
     #[Title('Collection')]
     public function render()
     {
+        $name=$this->getName();
+        SEOMeta::setTitle('Home');
+        SEOMeta::setDescription('This is my page description');
+        SEOMeta::setCanonical('https://codecasts.com.br/lesson');
+
+        OpenGraph::setDescription('This is my page description');
+        OpenGraph::setTitle('Home');
+        OpenGraph::setUrl('http://current.url.com');
+        OpenGraph::addProperty('type', 'articles');
+
+        JsonLd::setTitle('Homepage');
+        JsonLd::setDescription('This is my page description');
+        JsonLd::addImage(['https://codecasts.com.br/img/logo.jpg','https://codecasts.com.br/img/logo.jpg','https://codecasts.com.br/img/logo.jpg','https://codecasts.com.br/img/logo.jpg']);
+        //JsonLd::addValue('booo',['diidi'=>['iririri'=>'iieiei']]);
+
+        \Rezkonline\LaravelMetaPixel\Facades\MetaPixelFacade::viewContent([
+                'content_name'=> $name,
+                'content_category'=> 'categorie',
+                'content_ids'=> [$name],
+                'content_type'=> 'product_group',
+        ]);
+
         return view('livewire.guest.collection.collection-page')->with([
                 'breadcrumbs'=>$this->getBreadCrumb(),
-                'name'=>$this->getName(),
+                'name'=>$name,
                 'collections'=>$this->getCollections(),
                 'discount'=>$this->getDiscount(),
                 'products'=>$this->arrayPaginate($this->getProducts()),

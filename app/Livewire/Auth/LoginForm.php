@@ -3,6 +3,7 @@
 namespace App\Livewire\Auth;
 
 use App\Enums\Provider;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
@@ -45,8 +46,6 @@ class LoginForm extends Component implements HasForms
             {
                 $this->redirect(
                     route('filament.admin.pages.dashboard'),
-                    //session('url.intended', RouteServiceProvider::HOME),
-                    navigate: true
                 );
             }
         }
@@ -106,18 +105,17 @@ class LoginForm extends Component implements HasForms
 
         session()->regenerate();
 
-        if(auth()->user()->role==='admin')
+        if(User::isAdmin())
         {
             $this->redirect(
                 route('filament.admin.pages.dashboard'),
                 //session('url.intended', RouteServiceProvider::HOME),
-                
+
             );
         }elseif(auth()->user()->role==='client'){
             $this->redirect(
                 route('client.dashboard'),
                 //session('url.intended', RouteServiceProvider::HOME),
-                navigate: true
             );
         }
     }

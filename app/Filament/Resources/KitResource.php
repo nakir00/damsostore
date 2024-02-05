@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\KitResource\Pages;
 use App\Filament\Resources\KitResource\RelationManagers;
+use App\Models\CollectionGroup;
 use App\Models\Kit;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
@@ -24,11 +25,22 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
+use function Pest\Laravel\get;
+
 class KitResource extends Resource
 {
     protected static ?string $model = Kit::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public function mount(): void
+    {
+        abort_unless(auth()->user()->role==='admin', 403);
+        if(auth()->user()->role!=='admin')
+        {
+            redirect(route('filament.admin.pages.dashboard'));
+        }
+    }
 
     public static function form(Form $form): Form
     {
@@ -43,6 +55,7 @@ class KitResource extends Resource
                     ->size('md') // defaults to md
                     ->constrained(true)
                     ->lazyLoad(true)
+                    ->required()
                     ->preserveFilenames(),
                 TextInput::make('name')->required()->live(debounce: 1000)
                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
@@ -76,13 +89,7 @@ class KitResource extends Resource
                         ])
 
                     ]),
-                Select::make('collection_group_id')
-                    ->relationship(name: 'collectionGroup', titleAttribute: 'name')
-                    ->label('type de produit')
-                    ->searchable()
-                    ->preload()
-                    ->optionsLimit(20),
-                SpatieTagsInput::make('tags'),
+                
             ]);
     }
 
@@ -157,6 +164,11 @@ class KitResource extends Resource
             'create' => Pages\CreateKit::route('/create'),
             'edit' => Pages\EditKit::route('/{record}/edit'),
         ];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->role==='admin';
     }
 
     public static function getEloquentQuery(): Builder

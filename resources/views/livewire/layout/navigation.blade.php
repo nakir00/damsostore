@@ -79,7 +79,7 @@ new class extends Component
     -->
 
     <div class="fixed z-10 lg:hidden w-full h-16 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 ">
-        <div class="grid grid-cols-4 h-full max-w-lg justify-between items-center mx-auto">
+        <div class="grid grid-cols-3 h-full max-w-lg justify-between items-center mx-auto">
             <a href="{{route('home')}}" class="inline-flex flex-col items-center justify-center px-5 rounded-l-full hover:bg-gray-50  ">
 
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -101,10 +101,14 @@ new class extends Component
                 <span class=" font-thin text-xs">collections</span>
             </button>
 
-            <div class="inline-flex flex-col items-center justify-center px-2 hover:bg-gray-50  group">
-                @livewire('cartSm')
-                <span class=" font-thin text-xs ">panier</span>
-            </div>
+            {{-- <div class="inline-flex flex-col items-center justify-center px-2 hover:bg-gray-50  group">
+                <a href="{{route('blog')}}"  class="inline-flex flex-col items-center justify-center px-5 rounded-r-full hover:bg-gray-50 group">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                      </svg>
+                    <span class="font-thin text-xs ">Blog</span>
+                </a>
+            </div> --}}
 
             <a href="{{route('search')}}"  class="inline-flex flex-col items-center justify-center px-5 rounded-r-full hover:bg-gray-50 group">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -153,8 +157,10 @@ new class extends Component
 
         <nav aria-label="Top" class=" mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="">
-            <div class="flex h-16 justify-center lg:justify-between items-center">
+            <div class="flex h-16 justify-between items-center">
+                <div class=" lg:hidden">
 
+                </div>
               <!-- Logo -->
 
                     <a  href="{{ route('home') }}" >
@@ -164,9 +170,10 @@ new class extends Component
                         </div>
                     </a>
 
+                    <!-- Cart -->
 
               <!--  menus -->
-              <div class="ml-8 hidden lg:ml-8 lg:block lg:self-stretch self-stretch">
+              <div class="ml-8 hidden lg:ml-8 lg:self-stretch self-stretch lg:flex lg:justify-between lg:items-center">
                 <div class="flex h-full space-x-8">
                     @foreach ($menus as $collection)
                         <a class="flex justify-between items-center text-sm font-medium text-gray-700 hover:text-gray-800"
@@ -180,30 +187,37 @@ new class extends Component
                         </a>
                     @endforeach
                 </div>
+                {{-- <div class="m-12">
+                    |
+                </div>
+                <div>
+                    <a href="{{route('blog')}}" class="text-sm font-medium text-gray-700 hover:text-gray-800" >
+                        <span>Blog</span>
+                    </a>
+                </div> --}}
+
+
               </div>
 
-              <div>
+                <div>
 
-                <div class=" hidden lg:ml-8 ml-auto lg:flex items-center">
-                    <div class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                      <a href="{{route('search')}}" class="text-sm font-medium text-gray-700 hover:text-gray-800" >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                          </svg>
-                    <span class="sr-only">Profile</span></a>
+                    <div class=" ml-auto flex items-center justify-center">
+                        <div class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                            <a href="{{route('search')}}" class="text-sm font-medium text-gray-700 hover:text-gray-800" >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                </svg>
+                                <span class="sr-only">Profile</span>
+                            </a>
+                        </div>
+
+                        <div class=" pr-4 lg:pr-4 lg:ml-4 flow-root ">
+                            @livewire('cart')
+                        </div>
+
                     </div>
 
-                    <!-- Search -->
-                    {{-- <div class=" hidden lg:flex lg:ml-6">
-                      @livewire('search')
-                    </div> --}}
-
-                    <!-- Cart -->
-                    <div class=" hidden ml-4 lg:flow-root lg:ml-6">
-                        @livewire('cart')
-                    </div>
-                  </div>
-              </div>
+                </div>
             </div>
           </div>
         </nav>

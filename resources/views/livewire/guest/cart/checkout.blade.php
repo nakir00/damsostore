@@ -32,6 +32,8 @@ class extends Component {
 
     public $break=0;
 
+    public string $sessionId;
+
     public Order $order;
 
     public ?Address $adress=null;
@@ -101,6 +103,7 @@ class extends Component {
 
     public function mount()
     {
+
         Session::forget('cart');
         if(Session::has('cart'))
         {
@@ -109,6 +112,9 @@ class extends Component {
         }else {
             $this->dispatch('mountSession');
         }
+
+        $this->sessionId= Session::getId();
+
     }
 
     #[On('checkOutUpdate')]
@@ -122,11 +128,12 @@ class extends Component {
         }
         $this->mountCart(Session::get('cart.lines'));
         $this->mountSomme();
+
     }
 
     public array $steps = [
         'address' => 1,
-/*         'shipping_option' => 2,
+      /*'shipping_option' => 2,
         'billing_address' => 3, */
         'payment' => 2,
     ];
@@ -425,7 +432,13 @@ class extends Component {
 
 }; ?>
 
-<div>
+<div x-data="cart= @entangle('cart').live" x-init="fbq('track', 'InitiateCheckout', {
+    content_name: 'Commande en Cours - {{$sessionId}} ',
+    content_category: 'commande',
+    content_ids: ['{{$sessionId}}'],
+    content_type: 'commande',
+    currency: 'FCFA',
+});">
     @livewire('notifications')
     <div>
         <div class="max-w-screen-xl px-4 py-12 mt-5 mx-auto sm:px-6 lg:px-8">

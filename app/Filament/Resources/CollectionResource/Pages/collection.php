@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use App\Filament\Resources\CollectionResource;
 use App\Models\Collection as ModelCollection;
 use App\Models\Product;
+use App\Models\User;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Awcodes\Curator\Models\Media;
@@ -57,6 +58,8 @@ class collection extends Page implements HasForms, HasTable, HasInfolists
 
     public function mount(): void
     {
+
+        abort_unless(User::isAdmin(), 403);
         static::authorizeResourceAccess();
 
         if (

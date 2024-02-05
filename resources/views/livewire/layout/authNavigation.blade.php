@@ -16,6 +16,7 @@ new class extends Component {
                         <x-application-logo class="block w-auto text-gray-800 fill-current h-9 " />
                         <span class="self-center whitespace-nowrap  ml-3">DamsoStore</span>
                     </div>
+                    
                 </a>
             </div>
           </div>

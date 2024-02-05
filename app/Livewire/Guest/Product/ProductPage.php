@@ -200,6 +200,17 @@ class ProductPage extends Component
     #[Title("produit")]
     public function render()
     {
+        $form=$this->getForm();
+
+        \Rezkonline\LaravelMetaPixel\Facades\MetaPixelFacade::viewContent([
+            'content_name'=> $form['name'],
+            'content_category'=> 'product',
+            'content_ids'=> [$form['name']],
+            'content_type'=> 'product',
+            'currency'=> 'FCFA',
+            'value'=> $form['price'],
+        ]);
+
         return view('livewire.guest.product.product-page')->with([
             'images'=>$this->getImages(),
             'form'=>$this->getForm(),

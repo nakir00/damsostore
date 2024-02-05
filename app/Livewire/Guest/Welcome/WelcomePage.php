@@ -4,14 +4,17 @@ namespace App\Livewire\Guest\Welcome;
 
 use App\Models\Collection;
 use App\Models\Home;
+use App\Models\Page;
 use App\Models\Product;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use Combindma\FacebookPixel\Facades\FacebookPixel;
+use Combindma\FacebookPixel\FacebookPixel as FacebookPixelFacebookPixel;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Termwind\Components\Dd;
+use Pest\Plugins\Parallel\Handlers\Laravel;
 
 #[Layout('layouts.app')]
 class WelcomePage extends Component
@@ -90,6 +93,7 @@ class WelcomePage extends Component
     #[Title('Page d\'accueil')]
     public function render()
     {
+
         SEOMeta::setTitle('Bienvenue');
         SEOMeta::setDescription('les meilleures chaussures de Dakar');
         SEOMeta::setCanonical('https://damsostore.com/');
@@ -99,7 +103,12 @@ class WelcomePage extends Component
         OpenGraph::setUrl('https://damsostore.com/');
         OpenGraph::addProperty('type', 'shoe','chaussures dakar');
 
-
+        \Rezkonline\LaravelMetaPixel\Facades\MetaPixelFacade::viewContent([
+            // List of event parameters
+            'content_name'=> 'Page d\'Accueil',
+            'content_category'=> 'Accueil',
+            'content_type'=> 'Page',
+        ]);
 
         return view('livewire.guest.welcome.welcome-page')
                 ->with([

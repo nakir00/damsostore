@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Livewire\Admin\Accounts\Role\Role;
 use App\Livewire\Auth\LoginPage;
 use App\Livewire\Auth\RegisterPage;
+use App\Livewire\Auth\RegisterAdminPage;
+use App\Models\RegisterToken;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -16,6 +18,8 @@ Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('login', LoginPage::class)->name('login');
 
         Route::get('register', RegisterPage::class)->name('register');
+
+        Route::get('new-admin/{token}', RegisterAdminPage::class)->name('new-admin');
 
         Route::controller(Socialite::class)->name('socialite.')->group(function(){
             Route::get('{provider}/redirect','redirect')->name('redirect');
