@@ -32,7 +32,9 @@ return new class extends Migration
     {
         Schema::table('kits', function (Blueprint $table) {
             //
-            $table->dropColumn('collection_group_id');
+            if (Schema::hasColumn('kits', 'collection_group_id')) {
+                $table->dropColumn('collection_group_id');
+            }
         });
         Schema::table('kits', function (Blueprint $table) {
             //

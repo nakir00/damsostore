@@ -31,7 +31,7 @@
     </head>
 
     <body class="font-sans antialiased">
-        @include('facebookpixel::body')
+
         <div class="min-h-screen">
 
             <div >

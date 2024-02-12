@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Admins;
 use App\Filament\Resources\CollectionResource\Pages\collection;
 use App\Models\Address;
 use App\Models\Discount;
@@ -7,6 +8,7 @@ use App\Models\Kit;
 use App\Models\Order;
 use App\Models\Product;
 use App\Notifications\OrderReception;
+use FontLib\Table\Type\name;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Notification;
@@ -16,6 +18,7 @@ use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Rule;
 use phpDocumentor\Reflection\Types\Nullable;
+use Illuminate\Support\Str;
 
 new #[Layout('layouts.app')]
 class extends Component {
@@ -408,7 +411,7 @@ class extends Component {
 
         $this->order->save();
 
-        //Notification::route('mail',$this->contact_email)->notify(new OrderReception());
+        Notification::route('mail',Admins::values())->notify(new OrderReception($this->first_name.' '.$this->last_name,$this->contact_phone,$this->contact_email,$this->departement.' '.$this->commune.' '.$this->line_one.' '.$this->line_two.' '.$this->line_three));
 
         $this->dispatch('emptyCart');
         $this->dispatch('orderSended');

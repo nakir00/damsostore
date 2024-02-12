@@ -14,7 +14,7 @@ class OrderReception extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(private string $nom, private string $numero,private string $email, private string $adresse)
     {
         //
     }
@@ -35,8 +35,13 @@ class OrderReception extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('Nous accusons réception de votre commande')
-                    ->line('Elle sera validé sous peu, et nous vous enverrons la facture')
+                    ->subject('Nouvelle commande sur Damsostore !')
+                    ->greeting('Nous accusons réception d\'une nouvelle commande')
+                    ->line('voici quelques informations : ')
+                    ->line('nom : '.$this->nom)
+                    ->line('numero : '.$this->numero)
+                    ->line('adresse mail : '.$this->email)
+                    ->line('lieu de livraison : '.$this->adresse)
                     ->line('merci et à tout de suite !');
     }
 
